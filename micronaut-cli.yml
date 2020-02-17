@@ -1,0 +1,5 @@
+profile: service
+defaultPackage: com.github.ikkun2501
+---
+testFramework: junit
+sourceLanguage: kotlin
