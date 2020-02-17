@@ -1,14 +1,9 @@
 package com.ikkun2501.bookmanagement.interfaces
 
-import com.ikkun2501.bookmanagement.domain.Book
 import com.ikkun2501.bookmanagement.usecase.command.book.BookCreateParams
 import com.ikkun2501.bookmanagement.usecase.command.book.BookUpdateParams
+import com.ikkun2501.bookmanagement.usecase.query.query.BookSearchParams
 import com.ikkun2501.bookmanagement.usecase.query.query.BookSearchResultRow
-import io.micronaut.core.type.Argument
-import io.micronaut.http.HttpRequest
-import io.micronaut.http.HttpStatus
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.annotation.Client
 import io.micronaut.http.uri.UriBuilder
 import io.micronaut.test.annotation.MicronautTest
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -17,18 +12,14 @@ import org.junit.jupiter.api.assertAll
 import java.time.LocalDate
 import javax.inject.Inject
 
+/**
+ * BookControllerTest
+ */
 @MicronautTest
 internal class BookControllerTest {
 
-    // QUESTION コンストラクタインジェクションできない
     @Inject
-    @field:Client("/")
-    lateinit var client: RxHttpClient
-
-    // TODO Nestedしたテストはまだサポートされていない
-    // @Nested
-    // inner class CreateTest{
-    // }
+    lateinit var client: BookClient
 
     @Test
     fun create() {
@@ -38,12 +29,7 @@ internal class BookControllerTest {
             authorId = "1",
             summary = "test"
         )
-        val result =
-            client.toBlocking().exchange(HttpRequest.POST("/book", bookCreateParams), Argument.of(Book::class.java))
-
-        assertEquals(HttpStatus.CREATED, result.status)
-
-        val actualBook = result.body()!!
+        val actualBook = client.create(bookCreateParams)
         assertEquals(bookCreateParams.title, actualBook.title)
         assertEquals(bookCreateParams.publishDate, actualBook.publishDate)
         assertEquals(bookCreateParams.authorId, actualBook.authorId)
@@ -59,11 +45,7 @@ internal class BookControllerTest {
             authorId = "1",
             summary = "test"
         )
-        val book =
-            client.toBlocking().exchange(
-                HttpRequest.POST("/book", bookCreateParams),
-                Argument.of(Book::class.java)
-            ).body()!!
+        val book = client.create(bookCreateParams)
 
         val bookUpdateParams = BookUpdateParams(
             bookId = book.bookId,
@@ -72,11 +54,8 @@ internal class BookControllerTest {
             authorId = "2",
             summary = "テスト"
         )
-        val result = client.toBlocking().exchange(HttpRequest.PUT("/book", bookUpdateParams), Book::class.java)
+        val actualBook = client.update(bookUpdateParams)
 
-        assertEquals(HttpStatus.OK, result.status)
-
-        val actualBook = result.body()!!
         assertAll("Book",
             { assertEquals(bookUpdateParams.bookId, actualBook.bookId) },
             { assertEquals(bookUpdateParams.title, actualBook.title) },
@@ -87,19 +66,16 @@ internal class BookControllerTest {
     }
 
     @Test
-    fun deleteTest() {
+    fun delete() {
         val bookCreateParams = BookCreateParams(
             title = "aiueo",
             publishDate = LocalDate.now(),
             authorId = "1",
             summary = "test"
         )
-        val book =
-            client.toBlocking().exchange(HttpRequest.POST("/book", bookCreateParams), Book::class.java).body()!!
+        val book = client.create(bookCreateParams)
 
-        val result = client.toBlocking().exchange<Void, Void>(HttpRequest.DELETE("/book/${book.bookId}"))
-
-        assertEquals(HttpStatus.NO_CONTENT, result.status)
+        client.delete(book.bookId)
     }
 
     @Test
@@ -110,17 +86,9 @@ internal class BookControllerTest {
             authorId = "1",
             summary = "test"
         )
-        val book =
-            client.toBlocking().exchange(HttpRequest.POST("/book", bookCreateParams), Book::class.java).body()!!
+        val book = client.create(bookCreateParams)
 
-        // QUESTION このジェネリクスの書き方が正しいのか不明
-        val result = client.toBlocking()
-            .exchange<Void, BookSearchResultRow>(
-                HttpRequest.GET("/book/${book.bookId}"),
-                BookSearchResultRow::class.java
-            )
-
-        assertEquals(HttpStatus.OK, result.status)
+        val actualBook = client.show(book.bookId)
 
         val expected = BookSearchResultRow(
             bookId = book.bookId,
@@ -131,7 +99,7 @@ internal class BookControllerTest {
             authorId = book.authorId
         )
 
-        assertEquals(expected, result.body()!!)
+        assertEquals(expected, actualBook)
     }
 
     @Test
@@ -146,10 +114,7 @@ internal class BookControllerTest {
                 authorId = "${i % 2 + 1}",
                 summary = "summary${"%04d".format(i)}"
             )
-            client.toBlocking().exchange(
-                HttpRequest.POST("/book", bookCreateParams),
-                Argument.of(Book::class.java)
-            ).body()!!
+            client.create(bookCreateParams)
         }
 
         val keyword = "春"
@@ -162,13 +127,14 @@ internal class BookControllerTest {
             .queryParam("max", max)
             .build()
 
-        val result = client.toBlocking()
-            .exchange<Void, List<BookSearchResultRow>>(
-                HttpRequest.GET(url),
-                Argument.listOf(BookSearchResultRow::class.java)
+        val bookSearchResult = client.search(
+            BookSearchParams(
+                keyword = keyword,
+                offset = offset,
+                max = max
             )
+        )
 
-        val bookSearchResult = result.body()!!
         assertEquals(10, bookSearchResult.size)
         // assertEquals("title0022", bookSearchResult.first().title)
         // assertEquals("title0040", bookSearchResult.last().title)
