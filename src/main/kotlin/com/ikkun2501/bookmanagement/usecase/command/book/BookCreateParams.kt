@@ -8,5 +8,5 @@ data class BookCreateParams(
     @field:NotBlank
     val title: String,
     val authorId: String,
-    val summary: String
+    val description: String
 )

@@ -14,7 +14,7 @@ data class Book(
      */
     val authorId: String,
     /**
-     * 概要
+     * 説明
      */
-    val summary: String
+    val description: String
 )

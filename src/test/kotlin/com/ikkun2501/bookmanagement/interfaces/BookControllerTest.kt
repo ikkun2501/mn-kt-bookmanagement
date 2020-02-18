@@ -24,12 +24,12 @@ internal class BookControllerTest {
         val bookCreateParams = BookCreateParams(
             title = "a",
             authorId = "1",
-            summary = "test"
+            description = "test"
         )
         val actualBook = client.create(bookCreateParams)
         assertEquals(bookCreateParams.title, actualBook.title)
         assertEquals(bookCreateParams.authorId, actualBook.authorId)
-        assertEquals(bookCreateParams.summary, actualBook.summary)
+        assertEquals(bookCreateParams.description, actualBook.description)
     }
 
     @Test
@@ -38,14 +38,14 @@ internal class BookControllerTest {
         val bookCreateParams = BookCreateParams(
             title = "a",
             authorId = "1",
-            summary = "test"
+            description = "test"
         )
         val book = client.create(bookCreateParams)
 
         val bookUpdateParams = BookUpdateParams(
             bookId = book.bookId,
             title = "a",
-            isbncode = "978-4-12-005171-5",
+            description = "978-4-12-005171-5",
             authorId = "2"
         )
         val actualBook = client.update(bookUpdateParams)
@@ -62,7 +62,7 @@ internal class BookControllerTest {
         val bookCreateParams = BookCreateParams(
             title = "aiueo",
             authorId = "1",
-            summary = "test"
+            description = "test"
         )
         val book = client.create(bookCreateParams)
 
@@ -74,7 +74,7 @@ internal class BookControllerTest {
         val bookCreateParams = BookCreateParams(
             title = "aiueo",
             authorId = "1",
-            summary = "test"
+            description = "test"
         )
         val book = client.create(bookCreateParams)
 
@@ -82,7 +82,7 @@ internal class BookControllerTest {
 
         val expected = BookSearchResultRow(
             bookId = book.bookId,
-            summary = book.summary,
+            bookDescription = book.description,
             title = book.title,
             authorName = "村上春樹",
             authorId = book.authorId
@@ -100,7 +100,7 @@ internal class BookControllerTest {
             val bookCreateParams = BookCreateParams(
                 title = "title${"%04d".format(i)}",
                 authorId = "${i % 2 + 1}",
-                summary = "summary${"%04d".format(i)}"
+                description = "summary${"%04d".format(i)}"
             )
             client.create(bookCreateParams)
         }

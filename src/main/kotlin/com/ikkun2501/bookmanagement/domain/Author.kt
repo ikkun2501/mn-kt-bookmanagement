@@ -10,7 +10,7 @@ data class Author(
      */
     val authorName: String,
     /**
-     * 著者紹介
+     * 説明
      */
-    val aboutTheAuthor: String
+    val description: String
 )

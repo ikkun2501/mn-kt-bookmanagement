@@ -43,7 +43,7 @@ class MemBookQueryImpl(
     private fun toQueryModel(book: Book, author: Author): BookSearchResultRow {
         return BookSearchResultRow(
             bookId = book.bookId,
-            summary = book.summary,
+            bookDescription = book.description,
             title = book.title,
             authorId = author.authorId,
             authorName = author.authorName

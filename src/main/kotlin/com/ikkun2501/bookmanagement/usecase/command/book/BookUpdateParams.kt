@@ -8,6 +8,6 @@ data class BookUpdateParams(
     val bookId: String,
     @field:NotBlank
     val title: String,
-    val isbncode: String,
+    val description: String,
     val authorId: String
 )

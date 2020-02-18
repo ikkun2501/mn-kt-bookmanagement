@@ -13,7 +13,7 @@ class BookCommand(val bookRepository: BookRepository) {
         val book = createParams.run {
             Book(
                 bookId = UUID.randomUUID().toString(),
-                summary = summary,
+                description = description,
                 authorId = authorId,
                 title = title
             )
@@ -28,7 +28,8 @@ class BookCommand(val bookRepository: BookRepository) {
             book.copy(
                 bookId = bookId,
                 title = title,
-                authorId = authorId
+                authorId = authorId,
+                description = description
             )
         }.run(bookRepository::update)
     }
