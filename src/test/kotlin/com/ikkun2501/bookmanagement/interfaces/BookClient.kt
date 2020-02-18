@@ -3,8 +3,8 @@ package com.ikkun2501.bookmanagement.interfaces
 import com.ikkun2501.bookmanagement.domain.Book
 import com.ikkun2501.bookmanagement.usecase.command.book.BookCreateParams
 import com.ikkun2501.bookmanagement.usecase.command.book.BookUpdateParams
-import com.ikkun2501.bookmanagement.usecase.query.query.BookSearchParams
-import com.ikkun2501.bookmanagement.usecase.query.query.BookSearchResultRow
+import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchParams
+import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.PathVariable

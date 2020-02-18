@@ -5,9 +5,9 @@ import com.ikkun2501.bookmanagement.domain.Book
 import com.ikkun2501.bookmanagement.domain.NotFoundException
 import com.ikkun2501.bookmanagement.infrastructure.memory.MemAuthorDataStore
 import com.ikkun2501.bookmanagement.infrastructure.memory.MemBookDataStore
-import com.ikkun2501.bookmanagement.usecase.query.query.BookQuery
-import com.ikkun2501.bookmanagement.usecase.query.query.BookSearchResultRow
-import com.ikkun2501.bookmanagement.usecase.query.query.BookSearchParams
+import com.ikkun2501.bookmanagement.usecase.query.book.BookQuery
+import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow
+import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchParams
 import javax.inject.Singleton
 
 @Singleton
@@ -43,7 +43,6 @@ class MemBookQueryImpl(
     private fun toQueryModel(book: Book, author: Author): BookSearchResultRow {
         return BookSearchResultRow(
             bookId = book.bookId,
-            publishDate = book.publishDate,
             summary = book.summary,
             title = book.title,
             authorId = author.authorId,

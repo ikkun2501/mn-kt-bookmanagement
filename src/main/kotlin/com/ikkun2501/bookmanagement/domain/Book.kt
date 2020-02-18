@@ -11,17 +11,13 @@ data class Book(
      * 書籍名
      */
     val title:String,
-    /**
+    /*
      * 著者ID
      */
     val authorId: String,
     /**
      * 概要
      */
-    val summary: String,
-    /**
-     * 出版日
-     */
-    val publishDate: LocalDate
+    val summary: String
 )
 

@@ -1,4 +1,4 @@
-package com.ikkun2501.bookmanagement.usecase.query.query
+package com.ikkun2501.bookmanagement.usecase.query.book
 
 import io.micronaut.core.annotation.Introspected
 

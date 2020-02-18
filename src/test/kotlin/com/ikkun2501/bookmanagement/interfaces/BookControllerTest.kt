@@ -2,14 +2,12 @@ package com.ikkun2501.bookmanagement.interfaces
 
 import com.ikkun2501.bookmanagement.usecase.command.book.BookCreateParams
 import com.ikkun2501.bookmanagement.usecase.command.book.BookUpdateParams
-import com.ikkun2501.bookmanagement.usecase.query.query.BookSearchParams
-import com.ikkun2501.bookmanagement.usecase.query.query.BookSearchResultRow
-import io.micronaut.http.uri.UriBuilder
+import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchParams
+import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow
 import io.micronaut.test.annotation.MicronautTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
-import java.time.LocalDate
 import javax.inject.Inject
 
 /**
@@ -24,14 +22,12 @@ internal class BookControllerTest {
     @Test
     fun create() {
         val bookCreateParams = BookCreateParams(
-            title = "aiueo",
-            publishDate = LocalDate.now(),
+            title = "a",
             authorId = "1",
             summary = "test"
         )
         val actualBook = client.create(bookCreateParams)
         assertEquals(bookCreateParams.title, actualBook.title)
-        assertEquals(bookCreateParams.publishDate, actualBook.publishDate)
         assertEquals(bookCreateParams.authorId, actualBook.authorId)
         assertEquals(bookCreateParams.summary, actualBook.summary)
     }
@@ -40,8 +36,7 @@ internal class BookControllerTest {
     fun update() {
 
         val bookCreateParams = BookCreateParams(
-            title = "aiueo",
-            publishDate = LocalDate.now(),
+            title = "a",
             authorId = "1",
             summary = "test"
         )
@@ -49,19 +44,16 @@ internal class BookControllerTest {
 
         val bookUpdateParams = BookUpdateParams(
             bookId = book.bookId,
-            title = "あいうえお",
-            publishDate = LocalDate.now(),
-            authorId = "2",
-            summary = "テスト"
+            title = "a",
+            isbncode = "978-4-12-005171-5",
+            authorId = "2"
         )
         val actualBook = client.update(bookUpdateParams)
 
         assertAll("Book",
             { assertEquals(bookUpdateParams.bookId, actualBook.bookId) },
             { assertEquals(bookUpdateParams.title, actualBook.title) },
-            { assertEquals(bookUpdateParams.publishDate, actualBook.publishDate) },
-            { assertEquals(bookUpdateParams.authorId, actualBook.authorId) },
-            { assertEquals(bookUpdateParams.summary, actualBook.summary) }
+            { assertEquals(bookUpdateParams.authorId, actualBook.authorId) }
         )
     }
 
@@ -69,7 +61,6 @@ internal class BookControllerTest {
     fun delete() {
         val bookCreateParams = BookCreateParams(
             title = "aiueo",
-            publishDate = LocalDate.now(),
             authorId = "1",
             summary = "test"
         )
@@ -82,7 +73,6 @@ internal class BookControllerTest {
     fun show() {
         val bookCreateParams = BookCreateParams(
             title = "aiueo",
-            publishDate = LocalDate.now(),
             authorId = "1",
             summary = "test"
         )
@@ -94,7 +84,6 @@ internal class BookControllerTest {
             bookId = book.bookId,
             summary = book.summary,
             title = book.title,
-            publishDate = book.publishDate,
             authorName = "村上春樹",
             authorId = book.authorId
         )
@@ -110,7 +99,6 @@ internal class BookControllerTest {
         repeat(50) { i ->
             val bookCreateParams = BookCreateParams(
                 title = "title${"%04d".format(i)}",
-                publishDate = LocalDate.now(),
                 authorId = "${i % 2 + 1}",
                 summary = "summary${"%04d".format(i)}"
             )
@@ -120,12 +108,6 @@ internal class BookControllerTest {
         val keyword = "春"
         val offset = 10
         val max = 10
-
-        val url = UriBuilder.of("/book/search")
-            .queryParam("keyword", keyword)
-            .queryParam("offset", offset)
-            .queryParam("max", max)
-            .build()
 
         val bookSearchResult = client.search(
             BookSearchParams(

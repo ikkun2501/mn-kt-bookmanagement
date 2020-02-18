@@ -3,8 +3,8 @@ package com.ikkun2501.bookmanagement.interfaces
 import com.ikkun2501.bookmanagement.domain.Book
 import com.ikkun2501.bookmanagement.usecase.command.book.BookCreateParams
 import com.ikkun2501.bookmanagement.usecase.command.book.BookUpdateParams
-import com.ikkun2501.bookmanagement.usecase.query.query.BookSearchParams
-import com.ikkun2501.bookmanagement.usecase.query.query.BookSearchResultRow
+import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchParams
+import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Delete
@@ -14,6 +14,7 @@ import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
 import io.micronaut.http.client.annotation.Client
 import io.micronaut.validation.Validated
+import javax.validation.Valid
 
 /**
  * BookAPI インターフェイス
@@ -29,10 +30,10 @@ interface BookOperations {
     fun search(bookSearchParams: BookSearchParams): List<BookSearchResultRow>
 
     @Post("/")
-    fun create(@Body bookCreateParams: BookCreateParams): Book
+    fun create(@Valid @Body bookCreateParams: BookCreateParams): Book
 
     @Put("/")
-    fun update(@Body book: BookUpdateParams): Book
+    fun update(@Valid @Body book: BookUpdateParams): Book
 
     @Delete("/{bookId}")
     fun delete(@PathVariable bookId: String)
