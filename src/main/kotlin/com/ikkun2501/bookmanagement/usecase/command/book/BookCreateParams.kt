@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank
 @Introspected
 data class BookCreateParams(
     @field:NotBlank
-    val title:String,
+    val title: String,
     val authorId: String,
     val summary: String
 )

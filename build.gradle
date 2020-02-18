@@ -4,8 +4,12 @@ plugins {
     id "org.jetbrains.kotlin.plugin.allopen" version "1.3.50"
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id "application"
+    id "org.jlleitschuh.gradle.ktlint" version "9.2.1"
 }
 
+ktlint {
+    additionalEditorconfigFile.set(file(".editorconfig"))
+}
 
 version "0.1"
 group "mn.kt.hello.world"

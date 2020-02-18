@@ -1,7 +1,6 @@
 package com.ikkun2501.bookmanagement.usecase.command.book
 
 import io.micronaut.core.annotation.Introspected
-import java.time.LocalDate
 import javax.validation.constraints.NotBlank
 
 @Introspected

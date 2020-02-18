@@ -5,7 +5,6 @@ import com.ikkun2501.bookmanagement.usecase.command.book.BookCreateParams
 import com.ikkun2501.bookmanagement.usecase.command.book.BookUpdateParams
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchParams
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow
-import io.micronaut.core.annotation.Introspected
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.client.annotation.Client

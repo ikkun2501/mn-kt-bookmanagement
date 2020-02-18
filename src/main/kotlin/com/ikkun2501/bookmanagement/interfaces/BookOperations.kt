@@ -6,13 +6,11 @@ import com.ikkun2501.bookmanagement.usecase.command.book.BookUpdateParams
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchParams
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow
 import io.micronaut.http.annotation.Body
-import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Delete
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
-import io.micronaut.http.client.annotation.Client
 import io.micronaut.validation.Validated
 import javax.validation.Valid
 

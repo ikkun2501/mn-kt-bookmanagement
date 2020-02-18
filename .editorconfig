@@ -1,0 +1,3 @@
+[*.{kt, kts}]
+# インポートの順序はチェックしない（ktlintとideaのフォーマットで設定があわない）
+disabled_rules = import-ordering

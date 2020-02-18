@@ -1,7 +1,5 @@
 package com.ikkun2501.bookmanagement.domain
 
-import java.time.LocalDate
-
 data class Book(
     /**
      * ID
@@ -10,7 +8,7 @@ data class Book(
     /**
      * 書籍名
      */
-    val title:String,
+    val title: String,
     /*
      * 著者ID
      */
@@ -20,4 +18,3 @@ data class Book(
      */
     val summary: String
 )
-
