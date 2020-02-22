@@ -9,7 +9,17 @@ jackson:
   # Nullのときは、項目を省略
   # http://fasterxml.github.io/jackson-annotations/javadoc/2.9/com/fasterxml/jackson/annotation/JsonInclude.Include.html
   serializationInclusion: NON_NULL
-
+jooq:
+  datasources:
+    default:
+      sql-dialect: 'MYSQL'
+datasources:
+  default:
+    url: jdbc:mysql://localhost:3306/bookmanagement
+    username: root
+    password: ""
+    driverClassName: com.mysql.jdbc.Driver
+#    schema: bookamanagement
 ---
 micronaut:
   security:
@@ -27,5 +37,3 @@ micronaut:
             generator:
               secret: "${JWT_GENERATOR_SIGNATURE_SECRET:pleaseChangeThisSecretForANewOne}"
 
----
-datasources.default: {}

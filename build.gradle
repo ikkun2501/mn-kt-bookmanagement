@@ -5,6 +5,11 @@ plugins {
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id "application"
     id "org.jlleitschuh.gradle.ktlint" version "9.2.1"
+    id 'nu.studer.jooq' version '4.1'
+}
+
+subprojects {
+
 }
 
 ktlint {
@@ -36,6 +41,16 @@ dependencies {
     implementation "io.swagger.core.v3:swagger-annotations"
     implementation "io.micronaut:micronaut-http-server-netty"
     implementation "javax.annotation:javax.annotation-api"
+
+    // DB
+    runtime 'io.micronaut.configuration:micronaut-jdbc-hikari'
+    implementation 'io.micronaut.configuration:micronaut-jooq'
+    implementation "org.jooq:jooq-codegen:${jooqVersion}"
+    implementation "org.jooq:jooq-meta:${jooqVersion}"
+    implementation "mysql:mysql-connector-java:8.0.18"
+    implementation 'io.micronaut:micronaut-spring'
+    runtime 'org.springframework:spring-jdbc'
+
     kapt platform("io.micronaut:micronaut-bom:$micronautVersion")
     kapt "io.micronaut:micronaut-inject-java"
     kapt "io.micronaut:micronaut-validation"
@@ -44,12 +59,23 @@ dependencies {
     kaptTest "io.micronaut:micronaut-inject-java"
     runtimeOnly "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8"
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
-    runtimeOnly "com.h2database:h2"
     testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     testImplementation "io.mockk:mockk:1.9.3"
     testImplementation "org.junit.jupiter:junit-jupiter-api"
     testImplementation "io.micronaut.test:micronaut-test-junit5"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+
+
+    // jooq
+    jooqRuntime "mysql:mysql-connector-java:8.0.18"
+    jooqRuntime project(':jooq-custom-strategy')
+    jooqRuntime 'org.slf4j:slf4j-simple:1.7.25'
+
+    // test
+    testImplementation "com.ninja-squad:DbSetup:2.1.0"
+    testImplementation "com.ninja-squad:DbSetup-kotlin:2.1.0"
+
+
 }
 
 test.classpath += configurations.developmentOnly
@@ -66,7 +92,7 @@ allOpen {
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
         //Will retain parameter names for Java reflection
         javaParameters = true
     }
@@ -74,7 +100,7 @@ compileKotlin {
 
 compileTestKotlin {
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
         javaParameters = true
     }
 }
@@ -90,3 +116,55 @@ test {
     useJUnitPlatform()
 }
 
+def dbUrl = "jdbc:mysql://localhost:3306"
+def jdbcDriver = "com.mysql.cj.jdbc.Driver"
+def jooqDestDir = "$buildDir/jooq-gen/"
+def jooqDestPackage = 'com.example.db.jooq.gen'
+def dbUser = 'root'
+def dbPassword = ''
+
+jooq {
+    version = "${jooqVersion}"
+    edition = 'OSS'
+
+    // the name "sample" -> task name "generateSampleJooqSchemaSource" . see below.
+    sample(sourceSets.main) {
+        jdbc {
+            driver = "${jdbcDriver}"
+            url = "${dbUrl}"
+            user = "${dbUser}"
+            password = "${dbPassword}"
+        }
+        generator {
+            target {
+                packageName = "${jooqDestPackage}"
+                directory = "${jooqDestDir}"
+            }
+            strategy {
+                name = 'com.ikkun2501.bookmanagement.infrastructure.SamplePrefixGeneratorStrategy'
+            }
+            database {
+                name = 'org.jooq.meta.mysql.MySQLDatabase'
+                inputSchema = 'bookmanagement'
+//                includes = '.*'
+//                excludes = ''
+//                inputCatalog = ""
+            }
+            generate() {
+                daos = true
+                immutablePojos = true
+                pojosEqualsAndHashCode = true
+                generatedAnnotationType = "JAVAX_ANNOTATION_GENERATED"
+            }
+        }
+    }
+}
+
+compileJava {
+    dependsOn generateSampleJooqSchemaSource
+    sourceSets.main.java.srcDirs(jooqDestDir)
+}
+
+clean {
+    delete jooqDestDir
+}

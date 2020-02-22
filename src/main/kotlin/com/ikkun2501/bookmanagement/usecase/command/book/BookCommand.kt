@@ -3,21 +3,24 @@ package com.ikkun2501.bookmanagement.usecase.command.book
 import com.ikkun2501.bookmanagement.domain.Book
 import com.ikkun2501.bookmanagement.domain.BookRepository
 import com.ikkun2501.bookmanagement.domain.NotFoundException
-import java.util.UUID
+import io.micronaut.spring.tx.annotation.Transactional
 import javax.inject.Singleton
 
+@Transactional
 @Singleton
 class BookCommand(val bookRepository: BookRepository) {
 
     fun create(createParams: BookCreateParams): Book {
+
         val book = createParams.run {
             Book(
-                bookId = UUID.randomUUID().toString(),
+                bookId = -1,
                 description = description,
                 authorId = authorId,
                 title = title
             )
         }
+        bookRepository.create(book)
         return bookRepository.create(book)
     }
 
@@ -34,7 +37,7 @@ class BookCommand(val bookRepository: BookRepository) {
         }.run(bookRepository::update)
     }
 
-    fun delete(bookId: String) {
+    fun delete(bookId: Long) {
         bookRepository.delete(bookId)
     }
 }

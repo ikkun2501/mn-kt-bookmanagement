@@ -4,7 +4,7 @@ data class Book(
     /**
      * ID
      */
-    val bookId: String,
+    val bookId: Long,
     /**
      * 書籍名
      */
@@ -12,7 +12,7 @@ data class Book(
     /*
      * 著者ID
      */
-    val authorId: String,
+    val authorId: Long,
     /**
      * 説明
      */

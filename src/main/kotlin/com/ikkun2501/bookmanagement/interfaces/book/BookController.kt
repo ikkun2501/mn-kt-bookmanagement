@@ -1,9 +1,10 @@
-package com.ikkun2501.bookmanagement.interfaces
+package com.ikkun2501.bookmanagement.interfaces.book
 
 import com.ikkun2501.bookmanagement.domain.Book
 import com.ikkun2501.bookmanagement.usecase.command.book.BookCommand
 import com.ikkun2501.bookmanagement.usecase.command.book.BookCreateParams
 import com.ikkun2501.bookmanagement.usecase.command.book.BookUpdateParams
+import com.ikkun2501.bookmanagement.usecase.query.book.BookDetail
 import com.ikkun2501.bookmanagement.usecase.query.book.BookQuery
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchParams
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow
@@ -21,8 +22,8 @@ class BookController(
     private val bookQuery: BookQuery
 ) : BookOperations {
 
-    override fun show(bookId: String): BookSearchResultRow {
-        return bookQuery.findById(bookId)
+    override fun show(bookId: Long): BookDetail {
+        return bookQuery.detail(bookId)
     }
 
     override fun search(bookSearchParams: BookSearchParams): List<BookSearchResultRow> {
@@ -37,7 +38,7 @@ class BookController(
         return bookCommand.update(book)
     }
 
-    override fun delete(bookId: String) {
+    override fun delete(bookId: Long) {
         bookCommand.delete(bookId)
     }
 }

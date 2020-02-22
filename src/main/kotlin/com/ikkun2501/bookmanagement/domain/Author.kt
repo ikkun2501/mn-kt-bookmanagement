@@ -4,7 +4,7 @@ data class Author(
     /**
      * ID
      */
-    val authorId: String,
+    val authorId: Long,
     /**
      * 著者名
      */
