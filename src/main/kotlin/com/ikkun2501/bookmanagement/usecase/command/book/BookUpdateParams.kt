@@ -4,6 +4,14 @@ import io.micronaut.core.annotation.Introspected
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
+/**
+ * 書籍更新パラメータ
+ *
+ * @property bookId
+ * @property title
+ * @property description
+ * @property authorId
+ */
 @Introspected
 data class BookUpdateParams(
     val bookId: Long,

@@ -38,11 +38,9 @@ internal class BookControllerTest {
     @Inject
     lateinit var dsl: DSLContext
 
-    @Inject
-    @field:Client("/")
-    lateinit var httpClient: RxHttpClient
-    // TODO バリデーション
-
+    /**
+     * 登録テスト
+     */
     @Test
     fun create() {
 
@@ -86,6 +84,9 @@ internal class BookControllerTest {
         }
     }
 
+    /**
+     * 更新テスト
+     */
     @Test
     fun update() {
 
@@ -157,6 +158,9 @@ internal class BookControllerTest {
         assertEquals(0, dsl.fetchCount(BOOK))
     }
 
+    /**
+     * 詳細
+     */
     @Test
     fun show() {
 

@@ -6,6 +6,11 @@ import com.ikkun2501.bookmanagement.domain.BookRepository
 import org.jooq.DSLContext
 import javax.inject.Singleton
 
+/**
+ * BookRepositoryのJooqによる実装
+ *
+ * @property dsl
+ */
 @Singleton
 class JqBookRepositoryImpl(
     val dsl: DSLContext

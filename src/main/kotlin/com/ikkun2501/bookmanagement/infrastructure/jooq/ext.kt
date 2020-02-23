@@ -7,6 +7,11 @@ import com.ikkun2501.bookmanagement.usecase.query.book.BookDetail
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow
 import org.jooq.Record
 
+/**
+ * BookRecordからBookに変換
+ *
+ * @return
+ */
 fun BookRecord.toObject(): Book {
     return Book(
         bookId = bookId,
@@ -16,6 +21,9 @@ fun BookRecord.toObject(): Book {
     )
 }
 
+/**
+ * RecordからBookDetailへの変換
+ */
 fun Record.toDetail(): BookDetail {
     return BookDetail(
         bookId = this[Tables.BOOK.BOOK_ID],
@@ -27,6 +35,11 @@ fun Record.toDetail(): BookDetail {
     )
 }
 
+/**
+ * RecordからBookSearchResultRowへの変換
+ *
+ * @return
+ */
 fun Record.toSearchResult(): BookSearchResultRow {
     return BookSearchResultRow(
         bookId = this[Tables.BOOK.BOOK_ID],

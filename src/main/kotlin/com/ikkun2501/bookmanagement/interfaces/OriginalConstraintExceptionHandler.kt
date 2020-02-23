@@ -16,6 +16,9 @@ import javax.validation.ConstraintViolationException
 import javax.validation.ElementKind
 import javax.validation.Path
 
+/**
+ * バリデーション例外ハンドラー
+ */
 @Primary
 @Produces
 @Singleton

@@ -34,7 +34,6 @@ internal class BookUpdateParamsTest {
         val params = BookUpdateParams(
             bookId = 1L,
             authorId = 1L,
-            // description = "1234567890".repeat(200) + "1",
             description = "1234567890".repeat(200) + "1",
             title = "title"
         )

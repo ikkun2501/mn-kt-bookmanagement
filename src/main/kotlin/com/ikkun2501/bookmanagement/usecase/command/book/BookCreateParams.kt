@@ -4,6 +4,13 @@ import io.micronaut.core.annotation.Introspected
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
+/**
+ * 書籍登録パラメータ
+ *
+ * @property title
+ * @property authorId
+ * @property description
+ */
 @Introspected
 data class BookCreateParams(
     @field:NotBlank

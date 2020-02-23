@@ -6,6 +6,10 @@ import com.ikkun2501.bookmanagement.domain.NotFoundException
 import io.micronaut.spring.tx.annotation.Transactional
 import javax.inject.Singleton
 
+/**
+ * 書籍の更新系ユースケース
+ * @property bookRepository
+ */
 @Transactional
 @Singleton
 class BookCommand(val bookRepository: BookRepository) {

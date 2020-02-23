@@ -3,7 +3,7 @@ package com.ikkun2501.bookmanagement.usecase.query.book
 import io.micronaut.core.annotation.Introspected
 
 /**
- * 検索パラメータ
+ * 書籍検索パラメータ
  * MEMO Introspectedアノテーションを付けるとBeanIntrospectorの管理対象になり、
  *      GetParameterでもイミュータブルなオブジェクトのまま使用できる
  * @property keyword 検索キーワード

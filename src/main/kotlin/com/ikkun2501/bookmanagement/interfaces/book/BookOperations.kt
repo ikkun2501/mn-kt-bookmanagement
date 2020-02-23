@@ -22,18 +22,46 @@ import javax.validation.Valid
 @Validated
 interface BookOperations {
 
+    /**
+     * 詳細表示
+     * @param bookId
+     * @return
+     */
     @Get("/{bookId}")
     fun show(@PathVariable bookId: Long): BookDetail
 
+    /**
+     * 検索
+     *
+     * @param bookSearchParams
+     * @return
+     */
     @Get("/search{?bookSearchParams*}")
     fun search(bookSearchParams: BookSearchParams): List<BookSearchResultRow>
 
+    /**
+     * 登録
+     *
+     * @param bookCreateParams
+     * @return
+     */
     @Post("/")
     fun create(@Valid @Body bookCreateParams: BookCreateParams): Book
 
+    /**
+     * 更新
+     *
+     * @param book
+     * @return
+     */
     @Put("/")
     fun update(@Valid @Body book: BookUpdateParams): Book
 
+    /**
+     * 削除
+     *
+     * @param bookId
+     */
     @Delete("/{bookId}")
     fun delete(@PathVariable bookId: Long)
 }

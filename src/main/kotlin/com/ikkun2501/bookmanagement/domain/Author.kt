@@ -1,16 +1,14 @@
 package com.ikkun2501.bookmanagement.domain
 
+/**
+ * 著者Entitity
+ *
+ * @property authorId ID
+ * @property authorName 著者名
+ * @property description 説明
+ */
 data class Author(
-    /**
-     * ID
-     */
     val authorId: Long,
-    /**
-     * 著者名
-     */
     val authorName: String,
-    /**
-     * 説明
-     */
     val description: String
 )

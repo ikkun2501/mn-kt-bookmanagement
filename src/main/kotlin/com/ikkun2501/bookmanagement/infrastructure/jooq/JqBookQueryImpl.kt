@@ -10,6 +10,11 @@ import org.jooq.DSLContext
 import org.jooq.Record
 import javax.inject.Singleton
 
+/**
+ * BookQueryのJooqによる実装
+ *
+ * @property dslContext
+ */
 @Singleton
 class JqBookQueryImpl(
     private val dslContext: DSLContext
