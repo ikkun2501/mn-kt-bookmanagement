@@ -1,7 +1,7 @@
 package com.ikkun2501.bookmanagement.infrastructure.jooq
 
-import com.example.db.jooq.gen.Tables
-import com.example.db.jooq.gen.tables.records.BookRecord
+import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables
+import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.BookRecord
 import com.ikkun2501.bookmanagement.domain.Book
 import com.ikkun2501.bookmanagement.usecase.query.book.BookDetail
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow

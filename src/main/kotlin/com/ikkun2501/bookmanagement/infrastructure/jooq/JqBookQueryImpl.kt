@@ -1,7 +1,7 @@
 package com.ikkun2501.bookmanagement.infrastructure.jooq
 
-import com.example.db.jooq.gen.Tables.AUTHOR
-import com.example.db.jooq.gen.Tables.BOOK
+import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.AUTHOR
+import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.BOOK
 import com.ikkun2501.bookmanagement.usecase.query.book.BookDetail
 import com.ikkun2501.bookmanagement.usecase.query.book.BookQuery
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchParams

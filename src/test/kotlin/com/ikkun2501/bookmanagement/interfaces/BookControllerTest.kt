@@ -1,9 +1,9 @@
 package com.ikkun2501.bookmanagement.interfaces
 
-import com.example.db.jooq.gen.Tables.AUTHOR
-import com.example.db.jooq.gen.Tables.BOOK
-import com.example.db.jooq.gen.tables.records.AuthorRecord
-import com.example.db.jooq.gen.tables.records.BookRecord
+import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.AUTHOR
+import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.BOOK
+import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.AuthorRecord
+import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.BookRecord
 import com.ikkun2501.bookmanagement.deleteAll
 import com.ikkun2501.bookmanagement.infrastructure.jooq.toObject
 import com.ikkun2501.bookmanagement.usecase.command.book.BookCreateParams
@@ -11,8 +11,6 @@ import com.ikkun2501.bookmanagement.usecase.command.book.BookUpdateParams
 import com.ikkun2501.bookmanagement.usecase.query.book.BookDetail
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchParams
 import com.ninja_squad.dbsetup_kotlin.dbSetup
-import io.micronaut.http.client.RxHttpClient
-import io.micronaut.http.client.annotation.Client
 import io.micronaut.test.annotation.MicronautTest
 import org.jooq.DSLContext
 import org.junit.jupiter.api.Assertions.assertEquals

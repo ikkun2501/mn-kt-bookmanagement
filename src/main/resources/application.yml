@@ -19,7 +19,6 @@ datasources:
     username: root
     password: ""
     driverClassName: com.mysql.jdbc.Driver
-#    schema: bookamanagement
 ---
 micronaut:
   security:

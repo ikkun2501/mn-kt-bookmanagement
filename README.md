@@ -17,3 +17,31 @@ CQRSの考えを取り入れ、更新系と参照系の処理とモデルを分�
 * JUnit5
 * DbSetup
 * ktlint
+* Flyway
+
+
+# 開発
+## Databaseのセットアップ
+dockerを使って開発用のデータベースをセットアップできるようにしています。
+次のコマンドを実行するとテーブルに記載したDBにアクセスできるようになります。
+```
+docker-compose up
+```
+
+| DB | URL| user | password |
+| --- | --- | --- | --- |
+| 開発 | jdbc:mysql://localhost:33060 | root | "" |
+| ユニットテスト | jdbc:mysql://localhost:33061 | root | "" |
+
+
+## DBマイグレーション
+Flyway は、オープンソースのデータベースマイグレーションツールです。
+Flyway を使うことで、データベースの状態をバージョン管理できるようになります。
+Gradle Pluginを導入しています。次の表に記載したコマンドを実行すると各DBにDBの状態を最新化（マイグレーション）されます。
+
+| DB | コマンド |
+| --- | --- |
+| 開発 | flywayMigrate | 
+| ユニットテスト | unitFlywayMigrate | 
+
+
