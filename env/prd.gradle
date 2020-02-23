@@ -1,0 +1,10 @@
+ext {
+    datasource = [
+            default: [
+                    url     : "",
+                    user    : "",
+                    password: "",
+                    driver  : "com.mysql.cj.jdbc.Driver"
+            ]
+    ]
+}

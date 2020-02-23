@@ -1,0 +1,17 @@
+ext {
+    datasource = [
+            default: [
+                    url     : "jdbc:mysql://localhost:33060",
+                    user    : "root",
+                    password: "",
+                    driver  : "com.mysql.cj.jdbc.Driver"
+            ],
+            unit   : [
+                    url     : "jdbc:mysql://localhost:33061",
+                    user    : "root",
+                    password: "",
+                    driver  : "com.mysql.cj.jdbc.Driver"
+            ]
+    ]
+}
+

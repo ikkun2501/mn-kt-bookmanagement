@@ -6,7 +6,17 @@ plugins {
     id "application"
     id "org.jlleitschuh.gradle.ktlint" version "9.2.1"
     id 'nu.studer.jooq' version '4.1'
+    id "org.flywaydb.flyway" version "6.2.4"
 }
+
+
+// 環境ごとに読むコム設定ファイルを切り替える
+// 未設定の場合は、開発環境（dev）を読み込む
+if (!hasProperty('env')) {
+    ext.env = 'dev'
+}
+apply from: "env/${env}.gradle"
+
 
 subprojects {
 
@@ -37,7 +47,6 @@ dependencies {
     implementation "io.micronaut:micronaut-security-jwt"
     implementation "io.micronaut:micronaut-http-client"
     implementation "io.micronaut.configuration:micronaut-jdbc-hikari"
-    implementation "io.micronaut.configuration:micronaut-flyway"
     implementation "io.swagger.core.v3:swagger-annotations"
     implementation "io.micronaut:micronaut-http-server-netty"
     implementation "javax.annotation:javax.annotation-api"
@@ -74,8 +83,6 @@ dependencies {
     // test
     testImplementation "com.ninja-squad:DbSetup:2.1.0"
     testImplementation "com.ninja-squad:DbSetup-kotlin:2.1.0"
-
-
 }
 
 test.classpath += configurations.developmentOnly
@@ -90,7 +97,55 @@ allOpen {
     annotation("io.micronaut.aop.Around")
 }
 
+//////////////////////
+// jooq
+//////////////////////
+def jdbcDriver = "com.mysql.cj.jdbc.Driver"
+def jooqDestDir = "$buildDir/jooq-gen/"
+def jooqDestPackage = 'com.ikkun2501.bookmanagement.infrastructure.jooq.gen'
+
+jooq {
+    version = "${jooqVersion}"
+    edition = 'OSS'
+
+    bookmanagement(sourceSets.main) {
+        jdbc {
+            driver = "${jdbcDriver}"
+            url = "${datasource.default.url}"
+            user = "${datasource.default.user}"
+            password = "${datasource.default.password}"
+        }
+        generator {
+            target {
+                packageName = "${jooqDestPackage}"
+                directory = "${jooqDestDir}"
+            }
+            strategy {
+                name = 'com.ikkun2501.bookmanagement.infrastructure.SamplePrefixGeneratorStrategy'
+            }
+            database {
+                name = 'org.jooq.meta.mysql.MySQLDatabase'
+                inputSchema = 'bookmanagement'
+            }
+            generate() {
+                daos = true
+                immutablePojos = true
+                pojosEqualsAndHashCode = true
+                generatedAnnotationType = "JAVAX_ANNOTATION_GENERATED"
+            }
+        }
+    }
+}
+
+clean {
+    delete jooqDestDir
+}
+
 compileKotlin {
+    // kotlinのコンパイル前にjooqのコードを自動生成1
+    dependsOn generateBookmanagementJooqSchemaSource
+    sourceSets.main.java.srcDirs(jooqDestDir)
+
     kotlinOptions {
         jvmTarget = '11'
         //Will retain parameter names for Java reflection
@@ -116,54 +171,25 @@ test {
     useJUnitPlatform()
 }
 
-def dbUrl = "jdbc:mysql://localhost:3306"
-def jdbcDriver = "com.mysql.cj.jdbc.Driver"
-def jooqDestDir = "$buildDir/jooq-gen/"
-def jooqDestPackage = 'com.example.db.jooq.gen'
-def dbUser = 'root'
-def dbPassword = ''
 
-jooq {
-    version = "${jooqVersion}"
-    edition = 'OSS'
 
-    sample(sourceSets.main) {
-        jdbc {
-            driver = "${jdbcDriver}"
-            url = "${dbUrl}"
-            user = "${dbUser}"
-            password = "${dbPassword}"
-        }
-        generator {
-            target {
-                packageName = "${jooqDestPackage}"
-                directory = "${jooqDestDir}"
-            }
-            strategy {
-                name = 'com.ikkun2501.bookmanagement.infrastructure.SamplePrefixGeneratorStrategy'
-            }
-            database {
-                name = 'org.jooq.meta.mysql.MySQLDatabase'
-                inputSchema = 'bookmanagement'
-//                includes = '.*'
-//                excludes = ''
-//                inputCatalog = ""
-            }
-            generate() {
-                daos = true
-                immutablePojos = true
-                pojosEqualsAndHashCode = true
-                generatedAnnotationType = "JAVAX_ANNOTATION_GENERATED"
-            }
-        }
-    }
+
+//////////////////////
+// flyway
+//////////////////////
+
+flyway {
+    url = "${datasource.default.url}"
+    user = "${datasource.default.user}"
+    password = "${datasource.default.password}"
+    schemas = ['bookmanagement']
 }
 
-compileJava {
-    dependsOn generateSampleJooqSchemaSource
-    sourceSets.main.java.srcDirs(jooqDestDir)
+//if (ext.env == "dev") {
+task unitFlywayMigrate(type: org.flywaydb.gradle.task.FlywayMigrateTask) {
+    url = "${datasource.unit.url}"
+    user = "${datasource.unit.user}"
+    password = "${datasource.unit.password}"
+    schemas = ['bookmanagement']
 }
-
-clean {
-    delete jooqDestDir
-}
+//}

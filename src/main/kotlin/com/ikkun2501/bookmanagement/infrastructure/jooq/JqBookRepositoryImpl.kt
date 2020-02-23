@@ -1,6 +1,6 @@
 package com.ikkun2501.bookmanagement.infrastructure.jooq
 
-import com.example.db.jooq.gen.Tables.BOOK
+import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.BOOK
 import com.ikkun2501.bookmanagement.domain.Book
 import com.ikkun2501.bookmanagement.domain.BookRepository
 import org.jooq.DSLContext
