@@ -80,7 +80,7 @@ dependencies {
 
 test.classpath += configurations.developmentOnly
 
-mainClassName = "mn.kt.hello.world.Application"
+mainClassName = "com.ikkun2501.bookmanagement.Application"
 
 test {
     useJUnitPlatform()
@@ -127,7 +127,6 @@ jooq {
     version = "${jooqVersion}"
     edition = 'OSS'
 
-    // the name "sample" -> task name "generateSampleJooqSchemaSource" . see below.
     sample(sourceSets.main) {
         jdbc {
             driver = "${jdbcDriver}"
