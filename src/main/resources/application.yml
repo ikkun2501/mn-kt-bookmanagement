@@ -13,12 +13,16 @@ jooq:
   datasources:
     default:
       sql-dialect: 'MYSQL'
+
+---
+# TODO dev,stg,prdなど環境によって読み込む設定ファイルを切り替える https://docs.micronaut.io/latest/guide/config.html
 datasources:
   default:
-    url: jdbc:mysql://localhost:3306/bookmanagement
+    url: jdbc:mysql://localhost:33060/bookmanagement
     username: root
     password: ""
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
+
 ---
 micronaut:
   security:

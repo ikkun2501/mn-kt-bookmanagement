@@ -2,11 +2,6 @@ plugins {
     id "org.jetbrains.kotlin.jvm"
 }
 
-repositories {
-    mavenCentral()
-    maven { url "https://jcenter.bintray.com" }
-}
-
 dependencies {
     implementation "org.jooq:jooq-codegen:${jooqVersion}"
     implementation "org.jooq:jooq-meta:${jooqVersion}"
