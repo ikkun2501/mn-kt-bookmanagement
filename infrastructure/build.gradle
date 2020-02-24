@@ -1,0 +1,153 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.kotlin.kapt"
+    id "org.jetbrains.kotlin.plugin.allopen"
+    id 'nu.studer.jooq' version "4.1"
+    id "org.flywaydb.flyway" version "6.2.4"
+}
+
+
+configurations {
+    // for dependencies that are needed for development only
+    developmentOnly
+}
+
+dependencies {
+    implementation project(":domain")
+
+    implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}"
+    implementation "io.micronaut.configuration:micronaut-jdbc-hikari"
+    implementation "javax.annotation:javax.annotation-api"
+
+    // DB
+    implementation 'io.micronaut.configuration:micronaut-jooq'
+    implementation "org.jooq:jooq-codegen:${jooqVersion}"
+    implementation "org.jooq:jooq-meta:${jooqVersion}"
+    implementation "mysql:mysql-connector-java:8.0.18"
+
+    kapt platform("io.micronaut:micronaut-bom:$micronautVersion")
+    kapt "io.micronaut:micronaut-inject-java"
+    implementation "io.micronaut:micronaut-inject-java"
+    kaptTest platform("io.micronaut:micronaut-bom:$micronautVersion")
+    kaptTest "io.micronaut:micronaut-inject-java"
+
+    runtimeOnly "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8"
+    runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
+
+    testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
+    testImplementation "io.mockk:mockk:1.9.3"
+    testImplementation "org.junit.jupiter:junit-jupiter-api"
+    testImplementation "io.micronaut.test:micronaut-test-junit5"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
+
+    // jooq
+    jooqRuntime "mysql:mysql-connector-java:8.0.18"
+    jooqRuntime project(':jooq-custom-strategy')
+    jooqRuntime 'org.slf4j:slf4j-simple:1.7.25'
+
+    // test
+    testImplementation "com.ninja-squad:DbSetup:2.1.0"
+    testImplementation "com.ninja-squad:DbSetup-kotlin:2.1.0"
+}
+
+test.classpath += configurations.developmentOnly
+
+test {
+    useJUnitPlatform()
+}
+
+allOpen {
+    annotation("io.micronaut.aop.Around")
+}
+
+//////////////////////
+// jooq
+//////////////////////
+def jdbcDriver = "com.mysql.cj.jdbc.Driver"
+def jooqDestDir = "$buildDir/jooq-gen/"
+def jooqDestPackage = 'com.ikkun2501.bookmanagement.infrastructure.jooq.gen'
+
+jooq {
+    version = "${jooqVersion}"
+    edition = 'OSS'
+
+    bookmanagement(sourceSets.main) {
+        jdbc {
+            driver = "${jdbcDriver}"
+            url = "${datasource.default.url}"
+            user = "${datasource.default.user}"
+            password = "${datasource.default.password}"
+        }
+        generator {
+            target {
+                packageName = "${jooqDestPackage}"
+                directory = "${jooqDestDir}"
+            }
+            strategy {
+                name = 'com.ikkun2501.bookmanagement.infrastructure.OriginalPrefixGeneratorStrategy'
+            }
+            database {
+                name = 'org.jooq.meta.mysql.MySQLDatabase'
+                inputSchema = 'bookmanagement'
+                excludes = 'flyway_schema_history'
+            }
+            generate() {
+                daos = true
+                immutablePojos = true
+                pojosEqualsAndHashCode = true
+                generatedAnnotationType = "JAVAX_ANNOTATION_GENERATED"
+            }
+        }
+    }
+}
+
+clean {
+    delete jooqDestDir
+}
+
+compileKotlin {
+    // kotlinのコンパイル前にjooqのコードを自動生成1
+    dependsOn generateBookmanagementJooqSchemaSource
+    sourceSets.main.java.srcDirs(jooqDestDir)
+
+    kotlinOptions {
+        jvmTarget = '11'
+        //Will retain parameter names for Java reflection
+        javaParameters = true
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = '11'
+        javaParameters = true
+    }
+}
+
+// use JUnit 5 platform
+test {
+    useJUnitPlatform()
+}
+
+
+
+
+//////////////////////
+// flyway
+//////////////////////
+
+flyway {
+    url = "${datasource.default.url}"
+    user = "${datasource.default.user}"
+    password = "${datasource.default.password}"
+    schemas = ['bookmanagement']
+}
+
+task unitFlywayMigrate(type: org.flywaydb.gradle.task.FlywayMigrateTask) {
+    url = "${datasource.unit.url}"
+    user = "${datasource.unit.user}"
+    password = "${datasource.unit.password}"
+    schemas = ['bookmanagement']
+}

@@ -24,7 +24,6 @@ class BookCommand(val bookRepository: BookRepository) {
                 title = title
             )
         }
-        bookRepository.create(book)
         return bookRepository.create(book)
     }
 

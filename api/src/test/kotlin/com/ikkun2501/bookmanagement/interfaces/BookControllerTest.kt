@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Assertions.assertIterableEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.assertThrows
+import org.slf4j.LoggerFactory
 import javax.inject.Inject
 import javax.sql.DataSource
 import javax.validation.ConstraintViolationException
@@ -36,6 +37,7 @@ internal class BookControllerTest {
     @Inject
     lateinit var dsl: DSLContext
 
+    private val logger = LoggerFactory.getLogger(this.javaClass)
     /**
      * 登録テスト
      */
@@ -247,8 +249,7 @@ internal class BookControllerTest {
     @Test
     fun search_page_limit() {
 
-        val bookId = 1L
-        val book = BookRecord(bookId, 1, "タイトル", "書籍説明")
+        val book = BookRecord(null, 1, "タイトル", "書籍説明")
         val author = AuthorRecord(1, "著者名", "著者説明")
 
         dbSetup(dataSource) {
@@ -258,7 +259,8 @@ internal class BookControllerTest {
             }
             insertInto(BOOK.name) {
                 repeat(100) {
-                    book.bookId = it.toLong()
+                    book.bookId = it.toLong() + 1
+                    println(book.toString())
                     values(book.intoMap())
                 }
             }

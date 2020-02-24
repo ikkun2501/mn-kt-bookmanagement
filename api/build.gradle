@@ -1,33 +1,7 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.3.50"
-    id "org.jetbrains.kotlin.kapt" version "1.3.50"
-    id "org.jetbrains.kotlin.plugin.allopen" version "1.3.50"
-    id "com.github.johnrengelman.shadow" version "5.2.0"
-    id "application"
-    id "org.jlleitschuh.gradle.ktlint" version "9.2.1"
-}
-
-allprojects {
-
-    version "0.1"
-    group "com.github.ikkun2501"
-
-    repositories {
-        mavenCentral()
-        maven { url "https://jcenter.bintray.com" }
-    }
-
-    // 環境ごとに読む込む設定ファイルを切り替える
-    // 未設定の場合は、開発環境（dev）を読み込む
-    if (!hasProperty('env')) {
-        ext.env = 'dev'
-    }
-    apply from: "${rootDir}/env/${env}.gradle"
-
-}
-
-ktlint {
-    additionalEditorconfigFile.set(file(".editorconfig"))
+    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.kotlin.kapt"
+    id "org.jetbrains.kotlin.plugin.allopen"
 }
 
 configurations {
@@ -36,9 +10,8 @@ configurations {
 }
 
 dependencies {
-    implementation project(":api")
     implementation project(":domain")
-    implementation project(":infrastructure")
+    testImplementation project(":infrastructure")
 
     implementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
@@ -52,13 +25,6 @@ dependencies {
     implementation "io.swagger.core.v3:swagger-annotations"
 
     // DB
-    runtime 'io.micronaut.configuration:micronaut-jdbc-hikari'
-    implementation 'io.micronaut.configuration:micronaut-jooq'
-    implementation "org.jooq:jooq-codegen:${jooqVersion}"
-    implementation "org.jooq:jooq-meta:${jooqVersion}"
-    implementation "mysql:mysql-connector-java:8.0.18"
-    implementation 'io.micronaut:micronaut-spring'
-    runtime 'org.springframework:spring-jdbc'
 
     kapt platform("io.micronaut:micronaut-bom:$micronautVersion")
     kapt "io.micronaut:micronaut-inject-java"
@@ -69,6 +35,7 @@ dependencies {
     kaptTest "io.micronaut:micronaut-inject-java"
     runtimeOnly "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.8"
     runtimeOnly "ch.qos.logback:logback-classic:1.2.3"
+
     testImplementation platform("io.micronaut:micronaut-bom:$micronautVersion")
     testImplementation "io.mockk:mockk:1.9.3"
     testImplementation "org.junit.jupiter:junit-jupiter-api"
@@ -84,7 +51,6 @@ dependencies {
 
 test.classpath += configurations.developmentOnly
 
-mainClassName = "com.ikkun2501.bookmanagement.Application"
 
 test {
     useJUnitPlatform()
@@ -108,11 +74,4 @@ compileTestKotlin {
         javaParameters = true
     }
 }
-
-shadowJar {
-    mergeServiceFiles()
-}
-
-run.classpath += configurations.developmentOnly
-run.jvmArgs('-noverify', '-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')
 

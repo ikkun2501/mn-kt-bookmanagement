@@ -3,7 +3,8 @@ package com.ikkun2501.bookmanagement.infrastructure;
 import org.jooq.codegen.DefaultGeneratorStrategy;
 import org.jooq.meta.Definition;
 
-public class SamplePrefixGeneratorStrategy extends DefaultGeneratorStrategy {
+@SuppressWarnings("unused")
+public class OriginalPrefixGeneratorStrategy extends DefaultGeneratorStrategy {
 
     @Override
     public String getJavaClassName(final Definition definition, final Mode mode) {
