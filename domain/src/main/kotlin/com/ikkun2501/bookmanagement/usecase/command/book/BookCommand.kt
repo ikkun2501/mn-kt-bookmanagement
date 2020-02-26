@@ -17,6 +17,7 @@ class BookCommand(val bookRepository: BookRepository) {
     fun create(createParams: BookCreateParams): Book {
 
         val book = createParams.run {
+            // TODO 主キークラスを導入して未設定の状態を表す　http://gakuzzzz.github.io/slides/doma_practice/#8
             Book(
                 bookId = -1,
                 description = description,
@@ -40,7 +41,7 @@ class BookCommand(val bookRepository: BookRepository) {
         }.run(bookRepository::update)
     }
 
-    fun delete(bookId: Long) {
+    fun delete(bookId: Int) {
         bookRepository.delete(bookId)
     }
 }

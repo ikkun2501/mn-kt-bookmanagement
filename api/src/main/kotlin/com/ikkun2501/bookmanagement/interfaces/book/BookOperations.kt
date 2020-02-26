@@ -28,7 +28,7 @@ interface BookOperations {
      * @return
      */
     @Get("/{bookId}")
-    fun show(@PathVariable bookId: Long): BookDetail
+    fun show(@PathVariable bookId: Int): BookDetail
 
     /**
      * 検索
@@ -63,5 +63,5 @@ interface BookOperations {
      * @param bookId
      */
     @Delete("/{bookId}")
-    fun delete(@PathVariable bookId: Long)
+    fun delete(@PathVariable bookId: Int)
 }

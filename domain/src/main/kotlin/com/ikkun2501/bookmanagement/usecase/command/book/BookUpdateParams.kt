@@ -14,10 +14,10 @@ import javax.validation.constraints.Size
  */
 @Introspected
 data class BookUpdateParams(
-    val bookId: Long,
+    val bookId: Int,
     @field:NotBlank
     val title: String,
     @field:Size(max = 2000)
     val description: String,
-    val authorId: Long
+    val authorId: Int
 )

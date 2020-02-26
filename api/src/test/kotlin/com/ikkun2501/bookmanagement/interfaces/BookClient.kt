@@ -18,7 +18,7 @@ import io.micronaut.http.client.annotation.Client
 @Client("/book")
 interface BookClient : BookOperations {
 
-    override fun show(@PathVariable bookId: Long): BookDetail
+    override fun show(@PathVariable bookId: Int): BookDetail
 
     override fun search(bookSearchParams: BookSearchParams): List<BookSearchResultRow>
 
@@ -26,5 +26,5 @@ interface BookClient : BookOperations {
 
     override fun update(@Body book: BookUpdateParams): Book
 
-    override fun delete(@PathVariable bookId: Long)
+    override fun delete(@PathVariable bookId: Int)
 }

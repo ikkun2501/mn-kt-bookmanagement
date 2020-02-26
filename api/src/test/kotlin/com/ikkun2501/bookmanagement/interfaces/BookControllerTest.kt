@@ -90,7 +90,7 @@ internal class BookControllerTest {
     @Test
     fun update() {
 
-        val bookId = 1L
+        val bookId = 1
         dbSetup(dataSource) {
             deleteAll()
             insertInto(AUTHOR.name) {
@@ -141,7 +141,7 @@ internal class BookControllerTest {
     @Test
     fun delete() {
 
-        val bookId = 1L
+        val bookId = 1
 
         dbSetup(dataSource) {
             deleteAll()
@@ -164,7 +164,7 @@ internal class BookControllerTest {
     @Test
     fun show() {
 
-        val bookId = 1L
+        val bookId = 1
         val book = BookRecord(bookId, 1, "タイトル", "書籍説明")
         val author = AuthorRecord(1, "著者名", "著者説明")
 
@@ -195,7 +195,7 @@ internal class BookControllerTest {
     @Test
     fun search_全件数() {
 
-        val bookId = 1L
+        val bookId = 1
         val book = BookRecord(bookId, 1, "タイトル", "書籍説明")
         val author = AuthorRecord(1, "著者名", "著者説明")
 
@@ -219,7 +219,7 @@ internal class BookControllerTest {
     @Test
     fun search_keyword() {
 
-        val bookId = 1L
+        val bookId = 1
         val book = BookRecord(bookId, 1, "タイトル", "書籍説明")
         val author = AuthorRecord(1, "著者名", "著者説明")
 
@@ -259,7 +259,7 @@ internal class BookControllerTest {
             }
             insertInto(BOOK.name) {
                 repeat(100) {
-                    book.bookId = it.toLong() + 1
+                    book.bookId = it + 1
                     println(book.toString())
                     values(book.intoMap())
                 }
@@ -268,7 +268,7 @@ internal class BookControllerTest {
 
         val searchParams = BookSearchParams(keyword = "", page = 2, limit = 10)
         val result = client.search(searchParams)
-        assertIterableEquals((11L..20L).toList(), result.map { it.bookId })
+        assertIterableEquals((11..20).toList(), result.map { it.bookId })
     }
 
     @Test
@@ -290,6 +290,6 @@ internal class BookControllerTest {
 
         val searchParams = BookSearchParams(keyword = "", page = 1, limit = 10)
         val result = client.search(searchParams)
-        assertIterableEquals((5L downTo 1L).toList(), result.map { it.bookId })
+        assertIterableEquals((5 downTo 1).toList(), result.map { it.bookId })
     }
 }

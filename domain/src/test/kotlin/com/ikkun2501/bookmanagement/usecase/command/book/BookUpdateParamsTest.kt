@@ -15,8 +15,8 @@ internal class BookUpdateParamsTest {
     @Test
     fun notBlankTest() {
         val params = BookUpdateParams(
-            bookId = 1L,
-            authorId = 1L,
+            bookId = 1,
+            authorId = 1,
             description = "",
             title = ""
         )
@@ -32,8 +32,8 @@ internal class BookUpdateParamsTest {
     @Test
     fun maxTest() {
         val params = BookUpdateParams(
-            bookId = 1L,
-            authorId = 1L,
+            bookId = 1,
+            authorId = 1,
             description = "1234567890".repeat(200) + "1",
             title = "title"
         )

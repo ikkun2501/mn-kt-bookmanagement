@@ -22,7 +22,7 @@ class BookController(
     private val bookQuery: BookQuery
 ) : BookOperations {
 
-    override fun show(bookId: Long): BookDetail {
+    override fun show(bookId: Int): BookDetail {
         return bookQuery.detail(bookId)
     }
 
@@ -38,7 +38,7 @@ class BookController(
         return bookCommand.update(book)
     }
 
-    override fun delete(bookId: Long) {
+    override fun delete(bookId: Int) {
         bookCommand.delete(bookId)
     }
 }

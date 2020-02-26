@@ -9,8 +9,8 @@ package com.ikkun2501.bookmanagement.domain
  * @property description 説明
  */
 data class Book(
-    val bookId: Long,
+    val bookId: Int,
     val title: String,
-    val authorId: Long,
+    val authorId: Int,
     val description: String
 )

@@ -10,9 +10,9 @@ package com.ikkun2501.bookmanagement.usecase.query.book
  * @property authorName
  */
 data class BookSearchResultRow(
-    val bookId: Long,
+    val bookId: Int,
     val title: String,
     val bookDescription: String,
-    val authorId: Long,
+    val authorId: Int,
     val authorName: String
 )
