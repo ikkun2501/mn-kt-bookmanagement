@@ -16,7 +16,7 @@ class JqBookRepositoryImpl(
     val dsl: DSLContext
 ) : BookRepository {
 
-    override fun findById(bookId: Long): Book? {
+    override fun findById(bookId: Int): Book? {
         return dsl.fetchOne(BOOK, BOOK.BOOK_ID.eq(bookId)).toObject()
     }
 
@@ -34,7 +34,7 @@ class JqBookRepositoryImpl(
         return record.toObject()
     }
 
-    override fun delete(bookId: Long) {
+    override fun delete(bookId: Int) {
         dsl.deleteFrom(BOOK).where(BOOK.BOOK_ID.eq(bookId)).execute()
     }
 }

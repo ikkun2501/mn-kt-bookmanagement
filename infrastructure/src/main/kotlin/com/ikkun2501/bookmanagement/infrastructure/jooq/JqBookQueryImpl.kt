@@ -20,7 +20,7 @@ class JqBookQueryImpl(
     private val dslContext: DSLContext
 ) : BookQuery {
 
-    override fun detail(bookId: Long): BookDetail {
+    override fun detail(bookId: Int): BookDetail {
         return dslContext.select().from(BOOK.innerJoin(AUTHOR).onKey(BOOK.AUTHOR_ID))
             .where(BOOK.AUTHOR_ID.eq(AUTHOR.AUTHOR_ID)).fetchOne()
             .let(Record::toDetail)

@@ -7,7 +7,7 @@ datasources:
 ---
 micronaut:
   security:
-    enabled: false
+    enabled: true
     endpoints:
       login:
         enabled: true

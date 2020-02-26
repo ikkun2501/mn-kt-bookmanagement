@@ -40,7 +40,7 @@ class BookCommand(val bookRepository: BookRepository) {
         }.run(bookRepository::update)
     }
 
-    fun delete(bookId: Long) {
+    fun delete(bookId: Int) {
         bookRepository.delete(bookId)
     }
 }

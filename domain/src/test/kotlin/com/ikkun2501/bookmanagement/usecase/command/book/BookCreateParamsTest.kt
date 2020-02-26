@@ -14,7 +14,7 @@ internal class BookCreateParamsTest {
 
     @Test
     fun notBlankTest() {
-        val params = BookCreateParams(authorId = 1L, description = "", title = "")
+        val params = BookCreateParams(authorId = 1, description = "", title = "")
 
         val constraintViolations = validator.validate(params)
 
@@ -27,7 +27,7 @@ internal class BookCreateParamsTest {
     @Test
     fun maxTest() {
         val params = BookCreateParams(
-            authorId = 1L, description = "1234567890".repeat(200) + "1", title = "title"
+            authorId = 1, description = "1234567890".repeat(200) + "1", title = "title"
         )
 
         val constraintViolations = validator.validate(params)

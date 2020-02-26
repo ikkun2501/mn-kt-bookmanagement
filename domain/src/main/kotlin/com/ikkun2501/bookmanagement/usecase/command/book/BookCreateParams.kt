@@ -15,7 +15,7 @@ import javax.validation.constraints.Size
 data class BookCreateParams(
     @field:NotBlank
     val title: String,
-    val authorId: Long,
+    val authorId: Int,
     @field:Size(max = 2000)
     val description: String
 )

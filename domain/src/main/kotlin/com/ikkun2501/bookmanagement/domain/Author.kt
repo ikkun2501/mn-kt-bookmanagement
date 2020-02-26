@@ -8,7 +8,7 @@ package com.ikkun2501.bookmanagement.domain
  * @property description 説明
  */
 data class Author(
-    val authorId: Long,
+    val authorId: Int,
     val authorName: String,
     val description: String
 )
