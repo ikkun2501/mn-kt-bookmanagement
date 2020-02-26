@@ -1,8 +1,9 @@
 package com.ikkun2501.bookmanagement.infrastructure.jooq
 
+import com.ikkun2501.bookmanagement.domain.Book
+import com.ikkun2501.bookmanagement.domain.SequenceId
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.BookRecord
-import com.ikkun2501.bookmanagement.domain.Book
 import com.ikkun2501.bookmanagement.usecase.query.book.BookDetail
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow
 import org.jooq.Record
@@ -14,8 +15,8 @@ import org.jooq.Record
  */
 fun BookRecord.toObject(): Book {
     return Book(
-        bookId = bookId,
-        authorId = authorId,
+        bookId = SequenceId(bookId),
+        authorId = SequenceId(authorId),
         title = title,
         description = description
     )

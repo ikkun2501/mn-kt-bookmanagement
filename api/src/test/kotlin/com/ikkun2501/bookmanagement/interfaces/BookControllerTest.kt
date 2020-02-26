@@ -60,10 +60,10 @@ internal class BookControllerTest {
         val returnBook = client.create(bookCreateParams)
 
         assertEquals(bookCreateParams.title, returnBook.title)
-        assertEquals(bookCreateParams.authorId, returnBook.authorId)
+        assertEquals(bookCreateParams.authorId, returnBook.authorId.value)
         assertEquals(bookCreateParams.description, returnBook.description)
 
-        val dbBook = dsl.fetchOne(BOOK, BOOK.BOOK_ID.eq(returnBook.bookId)).toObject()
+        val dbBook = dsl.fetchOne(BOOK, BOOK.BOOK_ID.eq(returnBook.bookId.value)).toObject()
         assertEquals(dbBook, returnBook)
     }
 
@@ -112,9 +112,9 @@ internal class BookControllerTest {
         val returnBook = client.update(bookUpdateParams)
 
         assertAll("Book",
-            { assertEquals(bookUpdateParams.bookId, returnBook.bookId) },
+            { assertEquals(bookUpdateParams.bookId, returnBook.bookId.value) },
             { assertEquals(bookUpdateParams.title, returnBook.title) },
-            { assertEquals(bookUpdateParams.authorId, returnBook.authorId) }
+            { assertEquals(bookUpdateParams.authorId, returnBook.authorId.value) }
         )
 
         val dbBook = dsl.fetchOne(BOOK, BOOK.BOOK_ID.eq(bookId)).toObject()
