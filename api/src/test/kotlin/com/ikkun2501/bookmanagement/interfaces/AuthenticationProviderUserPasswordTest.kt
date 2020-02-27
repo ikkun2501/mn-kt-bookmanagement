@@ -38,21 +38,20 @@ internal class AuthenticationProviderUserPasswordTest {
                 values(UserRecord(1, LocalDateTime.now()).intoMap())
             }
             insertInto(Tables.USER_DETAIL.name) {
-                values(UserDetailRecord(1, "ユーザ名", LocalDate.now(), LocalDateTime.now()).intoMap())
+                values(UserDetailRecord(1, "ユーザ名", LocalDate.now()).intoMap())
             }
             insertInto(Tables.USER_AUTHENTICATION.name) {
                 values(
                     UserAuthenticationRecord(
                         1,
                         "loginId",
-                        passwordEncoder.encode("password"),
-                        LocalDateTime.now()
+                        passwordEncoder.encode("password")
                     ).intoMap()
                 )
             }
             insertInto(Tables.USER_AUTHORIZATION.name) {
-                values(UserAuthorizationRecord(1, "ROLE_ADMIN", LocalDateTime.now()).intoMap())
-                values(UserAuthorizationRecord(1, "ROLE_USER", LocalDateTime.now()).intoMap())
+                values(UserAuthorizationRecord(1, "ROLE_ADMIN").intoMap())
+                values(UserAuthorizationRecord(1, "ROLE_USER").intoMap())
             }
         }.launch()
 
