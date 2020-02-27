@@ -2,7 +2,7 @@ package com.ikkun2501.bookmanagement.interfaces.book
 
 import com.ikkun2501.bookmanagement.domain.Book
 import com.ikkun2501.bookmanagement.usecase.command.book.BookCommand
-import com.ikkun2501.bookmanagement.usecase.command.book.BookCreateParams
+import com.ikkun2501.bookmanagement.usecase.command.book.BookRegisterParams
 import com.ikkun2501.bookmanagement.usecase.command.book.BookUpdateParams
 import com.ikkun2501.bookmanagement.usecase.query.book.BookDetail
 import com.ikkun2501.bookmanagement.usecase.query.book.BookQuery
@@ -33,8 +33,8 @@ class BookController(
         return bookQuery.search(bookSearchParams)
     }
 
-    override fun create(token: String, bookCreateParams: BookCreateParams): Book {
-        return bookCommand.create(bookCreateParams)
+    override fun register(token: String, bookRegisterParams: BookRegisterParams): Book {
+        return bookCommand.register(bookRegisterParams)
     }
 
     override fun update(token: String, book: BookUpdateParams): Book {

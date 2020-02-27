@@ -61,7 +61,7 @@ fun toUser(
     authorizations: List<UserAuthorizationRecord>
 ): User {
     return User(
-        userId = detail.userId,
+        userId = SequenceId(detail.userId),
         loginId = authentication.loginId,
         password = authentication.password,
         roles = authorizations.map { it.userRole },

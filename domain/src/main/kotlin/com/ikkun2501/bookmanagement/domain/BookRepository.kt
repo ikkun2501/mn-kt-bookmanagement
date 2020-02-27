@@ -6,7 +6,7 @@ package com.ikkun2501.bookmanagement.domain
  */
 interface BookRepository {
     fun findById(bookId: Int): Book?
-    fun create(book: Book): Book
+    fun register(book: Book): Book
     fun update(book: Book): Book
     fun delete(bookId: Int)
 }

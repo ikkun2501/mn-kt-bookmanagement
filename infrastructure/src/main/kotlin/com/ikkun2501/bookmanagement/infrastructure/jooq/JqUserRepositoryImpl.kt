@@ -1,5 +1,6 @@
 package com.ikkun2501.bookmanagement.infrastructure.jooq
 
+import com.ikkun2501.bookmanagement.domain.SequenceId
 import com.ikkun2501.bookmanagement.domain.User
 import com.ikkun2501.bookmanagement.domain.UserRepository
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.USER_AUTHENTICATION
@@ -31,7 +32,7 @@ class JqUserRepositoryImpl(
         val authentication = dsl.fetchOne(USER_AUTHENTICATION, USER_AUTHENTICATION.USER_ID.eq(userId)) ?: return null
 
         return User(
-            userId = detail.userId,
+            userId = SequenceId(detail.userId),
             userName = detail.userName,
             birthday = detail.birthday,
             roles = authorization.map { it.userRole },

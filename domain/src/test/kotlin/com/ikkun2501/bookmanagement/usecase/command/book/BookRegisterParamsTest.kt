@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Test
 import javax.inject.Inject
 
 @MicronautTest
-internal class BookCreateParamsTest {
+internal class BookRegisterParamsTest {
 
     @Inject
     lateinit var validator: Validator
 
     @Test
     fun notBlankTest() {
-        val params = BookCreateParams(authorId = 1, description = "", title = "")
+        val params = BookRegisterParams(authorId = 1, description = "", title = "")
 
         val constraintViolations = validator.validate(params)
 
@@ -26,7 +26,7 @@ internal class BookCreateParamsTest {
 
     @Test
     fun maxTest() {
-        val params = BookCreateParams(
+        val params = BookRegisterParams(
             authorId = 1, description = "1234567890".repeat(200) + "1", title = "title"
         )
 

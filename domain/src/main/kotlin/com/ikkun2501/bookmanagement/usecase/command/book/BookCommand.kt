@@ -15,9 +15,9 @@ import javax.inject.Singleton
 @Singleton
 class BookCommand(val bookRepository: BookRepository) {
 
-    fun create(createParams: BookCreateParams): Book {
+    fun register(registerParams: BookRegisterParams): Book {
 
-        val book = createParams.run {
+        val book = registerParams.run {
             Book(
                 bookId = SequenceId.notAssigned(),
                 description = description,
@@ -25,7 +25,7 @@ class BookCommand(val bookRepository: BookRepository) {
                 title = title
             )
         }
-        return bookRepository.create(book)
+        return bookRepository.register(book)
     }
 
     fun update(updateParams: BookUpdateParams): Book {

@@ -1,7 +1,7 @@
 package com.ikkun2501.bookmanagement.interfaces.book
 
 import com.ikkun2501.bookmanagement.domain.Book
-import com.ikkun2501.bookmanagement.usecase.command.book.BookCreateParams
+import com.ikkun2501.bookmanagement.usecase.command.book.BookRegisterParams
 import com.ikkun2501.bookmanagement.usecase.command.book.BookUpdateParams
 import com.ikkun2501.bookmanagement.usecase.query.book.BookDetail
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchParams
@@ -43,11 +43,11 @@ interface BookOperations {
     /**
      * 登録
      *
-     * @param bookCreateParams
+     * @param bookRegisterParams
      * @return
      */
     @Post("/")
-    fun create(@Header("Authorization") token: String, @Valid @Body bookCreateParams: BookCreateParams): Book
+    fun register(@Header("Authorization") token: String, @Valid @Body bookRegisterParams: BookRegisterParams): Book
 
     /**
      * 更新
