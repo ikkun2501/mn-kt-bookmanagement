@@ -73,10 +73,10 @@ internal class BookControllerTest {
         val returnBook = client.create(token(), bookCreateParams)
 
         assertEquals(bookCreateParams.title, returnBook.title)
-        assertEquals(bookCreateParams.authorId, returnBook.authorId)
+        assertEquals(bookCreateParams.authorId, returnBook.authorId.value)
         assertEquals(bookCreateParams.description, returnBook.description)
 
-        val dbBook = dsl.fetchOne(BOOK, BOOK.BOOK_ID.eq(returnBook.bookId)).toObject()
+        val dbBook = dsl.fetchOne(BOOK, BOOK.BOOK_ID.eq(returnBook.bookId.value)).toObject()
         assertEquals(dbBook, returnBook)
     }
 
@@ -128,9 +128,9 @@ internal class BookControllerTest {
         val returnBook = client.update(token(), bookUpdateParams)
 
         assertAll("Book",
-            { assertEquals(bookUpdateParams.bookId, returnBook.bookId) },
+            { assertEquals(bookUpdateParams.bookId, returnBook.bookId.value) },
             { assertEquals(bookUpdateParams.title, returnBook.title) },
-            { assertEquals(bookUpdateParams.authorId, returnBook.authorId) }
+            { assertEquals(bookUpdateParams.authorId, returnBook.authorId.value) }
         )
 
         val dbBook = dsl.fetchOne(BOOK, BOOK.BOOK_ID.eq(bookId)).toObject()
@@ -282,7 +282,7 @@ internal class BookControllerTest {
             }
             insertInto(BOOK.name) {
                 repeat(100) {
-                    book.bookId = it.toInt() + 1
+                    book.bookId = it + 1
                     println(book.toString())
                     values(book.intoMap())
                 }

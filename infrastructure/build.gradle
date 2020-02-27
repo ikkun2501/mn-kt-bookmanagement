@@ -152,3 +152,10 @@ task unitFlywayMigrate(type: org.flywaydb.gradle.task.FlywayMigrateTask) {
     password = "${datasource.unit.password}"
     schemas = ['bookmanagement']
 }
+
+task unitFlywayClean(type: org.flywaydb.gradle.task.FlywayCleanTask) {
+    url = "${datasource.unit.url}"
+    user = "${datasource.unit.user}"
+    password = "${datasource.unit.password}"
+    schemas = ['bookmanagement']
+}

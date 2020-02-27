@@ -3,6 +3,7 @@ package com.ikkun2501.bookmanagement.usecase.command.book
 import com.ikkun2501.bookmanagement.domain.Book
 import com.ikkun2501.bookmanagement.domain.BookRepository
 import com.ikkun2501.bookmanagement.domain.NotFoundException
+import com.ikkun2501.bookmanagement.domain.SequenceId
 import io.micronaut.spring.tx.annotation.Transactional
 import javax.inject.Singleton
 
@@ -18,9 +19,9 @@ class BookCommand(val bookRepository: BookRepository) {
 
         val book = createParams.run {
             Book(
-                bookId = -1,
+                bookId = SequenceId.notAssigned(),
                 description = description,
-                authorId = authorId,
+                authorId = SequenceId(authorId),
                 title = title
             )
         }
@@ -32,9 +33,9 @@ class BookCommand(val bookRepository: BookRepository) {
 
         return updateParams.run {
             book.copy(
-                bookId = bookId,
+                bookId = SequenceId(bookId),
                 title = title,
-                authorId = authorId,
+                authorId = SequenceId(authorId),
                 description = description
             )
         }.run(bookRepository::update)
