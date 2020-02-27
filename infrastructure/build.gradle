@@ -22,7 +22,10 @@ dependencies {
     implementation "javax.annotation:javax.annotation-api"
 
     // DB
-    implementation 'io.micronaut.configuration:micronaut-jooq'
+    implementation ('io.micronaut.configuration:micronaut-jooq') {
+        exclude module: 'org.jooq:jooq'
+    }
+    implementation "org.jooq:jooq:${jooqVersion}"
     implementation "org.jooq:jooq-codegen:${jooqVersion}"
     implementation "org.jooq:jooq-meta:${jooqVersion}"
     implementation "mysql:mysql-connector-java:8.0.18"
@@ -131,8 +134,6 @@ compileTestKotlin {
 test {
     useJUnitPlatform()
 }
-
-
 
 
 //////////////////////
