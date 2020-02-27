@@ -7,8 +7,6 @@ import com.ikkun2501.bookmanagement.usecase.command.book.BookUpdateParams
 import com.ikkun2501.bookmanagement.usecase.query.book.BookDetail
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchParams
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow
-import io.micronaut.http.annotation.Body
-import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.client.annotation.Client
 
 /**
@@ -18,13 +16,13 @@ import io.micronaut.http.client.annotation.Client
 @Client("/book")
 interface BookClient : BookOperations {
 
-    override fun show(@PathVariable bookId: Int): BookDetail
+    override fun show(token: String, bookId: Int): BookDetail
 
-    override fun search(bookSearchParams: BookSearchParams): List<BookSearchResultRow>
+    override fun search(token: String, bookSearchParams: BookSearchParams): List<BookSearchResultRow>
 
-    override fun create(@Body bookCreateParams: BookCreateParams): Book
+    override fun create(token: String, bookCreateParams: BookCreateParams): Book
 
-    override fun update(@Body book: BookUpdateParams): Book
+    override fun update(token: String, book: BookUpdateParams): Book
 
-    override fun delete(@PathVariable bookId: Int)
+    override fun delete(token: String, bookId: Int)
 }

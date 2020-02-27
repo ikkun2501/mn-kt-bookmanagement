@@ -24,8 +24,10 @@ dependencies {
     implementation "javax.annotation:javax.annotation-api"
     implementation "io.swagger.core.v3:swagger-annotations"
 
-    // DB
+    // BCrypt
+    implementation "org.springframework.security:spring-security-crypto:${springSecurityCryptoVersion}"
 
+    // DB
     kapt platform("io.micronaut:micronaut-bom:$micronautVersion")
     kapt "io.micronaut:micronaut-inject-java"
     implementation "io.micronaut:micronaut-inject-java"

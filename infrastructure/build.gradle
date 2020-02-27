@@ -97,6 +97,7 @@ jooq {
                 daos = true
                 immutablePojos = true
                 pojosEqualsAndHashCode = true
+                javaTimeTypes = true
                 generatedAnnotationType = "JAVAX_ANNOTATION_GENERATED"
             }
         }

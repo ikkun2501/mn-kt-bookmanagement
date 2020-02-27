@@ -9,6 +9,7 @@ import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Delete
 import io.micronaut.http.annotation.Get
+import io.micronaut.http.annotation.Header
 import io.micronaut.http.annotation.PathVariable
 import io.micronaut.http.annotation.Post
 import io.micronaut.http.annotation.Put
@@ -28,7 +29,7 @@ interface BookOperations {
      * @return
      */
     @Get("/{bookId}")
-    fun show(@PathVariable bookId: Int): BookDetail
+    fun show(@Header("Authorization") token: String, @PathVariable bookId: Int): BookDetail
 
     /**
      * 検索
@@ -37,7 +38,7 @@ interface BookOperations {
      * @return
      */
     @Get("/search{?bookSearchParams*}")
-    fun search(bookSearchParams: BookSearchParams): List<BookSearchResultRow>
+    fun search(@Header("Authorization") token: String, bookSearchParams: BookSearchParams): List<BookSearchResultRow>
 
     /**
      * 登録
@@ -46,7 +47,7 @@ interface BookOperations {
      * @return
      */
     @Post("/")
-    fun create(@Valid @Body bookCreateParams: BookCreateParams): Book
+    fun create(@Header("Authorization") token: String, @Valid @Body bookCreateParams: BookCreateParams): Book
 
     /**
      * 更新
@@ -55,7 +56,7 @@ interface BookOperations {
      * @return
      */
     @Put("/")
-    fun update(@Valid @Body book: BookUpdateParams): Book
+    fun update(@Header("Authorization") token: String, @Valid @Body book: BookUpdateParams): Book
 
     /**
      * 削除
@@ -63,5 +64,5 @@ interface BookOperations {
      * @param bookId
      */
     @Delete("/{bookId}")
-    fun delete(@PathVariable bookId: Int)
+    fun delete(@Header("Authorization") token: String, @PathVariable bookId: Int)
 }

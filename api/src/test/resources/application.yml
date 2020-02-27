@@ -1,0 +1,16 @@
+---
+micronaut:
+  application:
+    name: bookamanagement
+
+---
+jackson:
+  # 空文字がnull扱いになるのを防ぐために設定
+  # Nullのときは、項目を省略
+  # http://fasterxml.github.io/jackson-annotations/javadoc/2.9/com/fasterxml/jackson/annotation/JsonInclude.Include.html
+  serializationInclusion: NON_NULL
+jooq:
+  datasources:
+    default:
+      sql-dialect: 'MYSQL'
+
