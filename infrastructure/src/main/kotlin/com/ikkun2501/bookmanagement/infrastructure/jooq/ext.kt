@@ -1,14 +1,19 @@
 package com.ikkun2501.bookmanagement.infrastructure.jooq
 
+import com.ikkun2501.bookmanagement.domain.Author
 import com.ikkun2501.bookmanagement.domain.Book
 import com.ikkun2501.bookmanagement.domain.EncodedPassword
 import com.ikkun2501.bookmanagement.domain.SequenceId
 import com.ikkun2501.bookmanagement.domain.User
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables
+import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.AuthorRecord
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.BookRecord
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.UserAuthenticationRecord
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.UserAuthorizationRecord
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.UserDetailRecord
+import com.ikkun2501.bookmanagement.usecase.query.author.AuthorDetail
+import com.ikkun2501.bookmanagement.usecase.query.author.AuthorSearchResultRow
+import com.ikkun2501.bookmanagement.usecase.query.author.BookInfo
 import com.ikkun2501.bookmanagement.usecase.query.book.BookDetail
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow
 import org.jooq.Record
@@ -28,9 +33,22 @@ fun BookRecord.toObject(): Book {
 }
 
 /**
+ * AuthorRecordからAuthorに変換
+ *
+ * @return
+ */
+fun AuthorRecord.toObject(): Author {
+    return Author(
+        authorId = SequenceId(authorId),
+        authorName = authorName,
+        description = description
+    )
+}
+
+/**
  * RecordからBookDetailへの変換
  */
-fun Record.toDetail(): BookDetail {
+fun Record.toBookDetail(): BookDetail {
     return BookDetail(
         bookId = this[Tables.BOOK.BOOK_ID],
         bookDescription = this[Tables.BOOK.DESCRIPTION],
@@ -42,17 +60,51 @@ fun Record.toDetail(): BookDetail {
 }
 
 /**
+ * RecordからBookDetailへの変換
+ */
+fun toAuthorDetail(authorRecord: AuthorRecord, books: List<BookRecord>): AuthorDetail {
+    return AuthorDetail(
+        authorId = authorRecord.authorId,
+        authorName = authorRecord.authorName,
+        authorDescription = authorRecord.description,
+        books = books.map(BookRecord::toBookInfo)
+    )
+}
+
+/**
  * RecordからBookSearchResultRowへの変換
  *
  * @return
  */
-fun Record.toSearchResult(): BookSearchResultRow {
+fun Record.toBookSearchResult(): BookSearchResultRow {
     return BookSearchResultRow(
         bookId = this[Tables.BOOK.BOOK_ID],
         bookDescription = this[Tables.BOOK.DESCRIPTION],
         title = this[Tables.BOOK.TITLE],
         authorId = this[Tables.BOOK.AUTHOR_ID],
         authorName = this[Tables.AUTHOR.AUTHOR_NAME]
+    )
+}
+
+fun BookRecord.toBookInfo(): BookInfo {
+    return BookInfo(
+        bookId = bookId,
+        bookDescription = description,
+        authorId = authorId,
+        title = title
+    )
+}
+
+/**
+ * RecordからBookSearchResultRowへの変換
+ *
+ * @return
+ */
+fun Record.toAuthorSearchResult(): AuthorSearchResultRow {
+    return AuthorSearchResultRow(
+        authorId = this[Tables.AUTHOR.AUTHOR_ID],
+        authorName = this[Tables.AUTHOR.AUTHOR_NAME],
+        authorDescription = this[Tables.AUTHOR.AUTHOR_NAME]
     )
 }
 

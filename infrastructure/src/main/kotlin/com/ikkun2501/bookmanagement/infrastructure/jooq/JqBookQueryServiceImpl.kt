@@ -23,7 +23,7 @@ class JqBookQueryServiceImpl(
     override fun detail(bookId: Int): BookDetail {
         return dslContext.select().from(BOOK.innerJoin(AUTHOR).onKey(BOOK.AUTHOR_ID))
             .where(BOOK.AUTHOR_ID.eq(AUTHOR.AUTHOR_ID)).fetchOne()
-            .let(Record::toDetail)
+            .let(Record::toBookDetail)
     }
 
     override fun search(bookSearchParams: BookSearchParams): List<BookSearchResultRow> {
@@ -35,6 +35,6 @@ class JqBookQueryServiceImpl(
             .orderBy(BOOK.TITLE)
             .offset((bookSearchParams.page - 1) * bookSearchParams.limit)
             .limit(bookSearchParams.limit)
-            .map(Record::toSearchResult)
+            .map(Record::toBookSearchResult)
     }
 }

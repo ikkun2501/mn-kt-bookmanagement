@@ -16,7 +16,6 @@ import javax.inject.Singleton
 class BookCommandService(val bookRepository: BookRepository) {
 
     fun save(saveParams: BookSaveParams): Book {
-
         val book = saveParams.run {
             Book(
                 bookId = SequenceId.notAssigned(),
