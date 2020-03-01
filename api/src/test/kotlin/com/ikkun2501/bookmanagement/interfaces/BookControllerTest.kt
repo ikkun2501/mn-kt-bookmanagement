@@ -7,7 +7,7 @@ import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.BOOK
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.AuthorRecord
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.BookRecord
 import com.ikkun2501.bookmanagement.insertDefaultUser
-import com.ikkun2501.bookmanagement.usecase.command.book.BookRegisterParams
+import com.ikkun2501.bookmanagement.usecase.command.book.BookSaveParams
 import com.ikkun2501.bookmanagement.usecase.command.book.BookUpdateParams
 import com.ikkun2501.bookmanagement.usecase.query.book.BookDetail
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchParams
@@ -57,7 +57,7 @@ internal class BookControllerTest {
      * 登録テスト
      */
     @Test
-    fun register() {
+    fun save() {
 
         dbSetup(dataSource) {
             deleteAll()
@@ -67,17 +67,17 @@ internal class BookControllerTest {
             }
         }.launch()
 
-        val bookRegisterParams = BookRegisterParams(
+        val bookSaveParams = BookSaveParams(
             title = "タイトル",
             authorId = 1,
             description = "書籍説明"
         )
 
-        val returnBook = bookClient.register(token(), bookRegisterParams)
+        val returnBook = bookClient.save(token(), bookSaveParams)
 
-        assertEquals(bookRegisterParams.title, returnBook.title)
-        assertEquals(bookRegisterParams.authorId, returnBook.authorId.value)
-        assertEquals(bookRegisterParams.description, returnBook.description)
+        assertEquals(bookSaveParams.title, returnBook.title)
+        assertEquals(bookSaveParams.authorId, returnBook.authorId.value)
+        assertEquals(bookSaveParams.description, returnBook.description)
 
         val dbBook = bookRepository.findById(returnBook.bookId.value)!!
         assertEquals(dbBook, returnBook)
@@ -87,7 +87,7 @@ internal class BookControllerTest {
      * バリデーションの設定がされているかの確認
      */
     @Test
-    fun register_validation() {
+    fun save_validation() {
 
         dbSetup(dataSource) {
             deleteAll()
@@ -95,8 +95,8 @@ internal class BookControllerTest {
         }.launch()
 
         assertThrows<ConstraintViolationException>("") {
-            bookClient.register(
-                token(), BookRegisterParams(title = "", authorId = 1, description = "書籍説明")
+            bookClient.save(
+                token(), BookSaveParams(title = "", authorId = 1, description = "書籍説明")
             )
         }
     }

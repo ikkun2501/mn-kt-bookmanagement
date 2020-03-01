@@ -44,7 +44,7 @@ class JqUserRepositoryImpl(
         )
     }
 
-    override fun register(user: User): User {
+    override fun save(user: User): User {
         val userRecord = dsl.newRecord(Tables.USER)
             .values(null, LocalDateTime.now())
         userRecord.store()

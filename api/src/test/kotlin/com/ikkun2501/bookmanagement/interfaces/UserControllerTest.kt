@@ -5,7 +5,7 @@ import com.ikkun2501.bookmanagement.deleteAll
 import com.ikkun2501.bookmanagement.domain.UserRepository
 import com.ikkun2501.bookmanagement.insertDefaultUser
 import com.ikkun2501.bookmanagement.usecase.command.user.UserDetailUpdateParams
-import com.ikkun2501.bookmanagement.usecase.command.user.UserRegisterParams
+import com.ikkun2501.bookmanagement.usecase.command.user.UserSaveParams
 import com.ninja_squad.dbsetup_kotlin.dbSetup
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.test.annotation.MicronautTest
@@ -52,13 +52,13 @@ internal class UserControllerTest {
      * 登録テスト
      */
     @Test
-    fun register() {
+    fun save() {
 
         dbSetup(dataSource) {
             deleteAll()
         }.launch()
 
-        val userRegisterParams = UserRegisterParams(
+        val userSaveParams = UserSaveParams(
             loginId = "user",
             password = "password",
             confirmPassword = "password",
@@ -66,13 +66,13 @@ internal class UserControllerTest {
             birthday = LocalDate.now()
         )
 
-        val returnUser = userClient.register(userRegisterParams)
+        val returnUser = userClient.save(userSaveParams)
 
         assertAll(
-            { assertEquals(userRegisterParams.loginId, returnUser.loginId) },
-            { assertEquals(userRegisterParams.userName, returnUser.userName) },
+            { assertEquals(userSaveParams.loginId, returnUser.loginId) },
+            { assertEquals(userSaveParams.userName, returnUser.userName) },
             { assertIterableEquals(listOf("ROLE_USER"), returnUser.roles) },
-            { assertTrue(returnUser.password.matches(userRegisterParams.password)) }
+            { assertTrue(returnUser.password.matches(userSaveParams.password)) }
         )
 
         val dbUser = userRepository.findByUserId(returnUser.userId.value)!!
@@ -83,13 +83,13 @@ internal class UserControllerTest {
      * パスワードが異なる場合
      */
     @Test
-    fun register_password_different() {
+    fun save_password_different() {
 
         dbSetup(dataSource) {
             deleteAll()
         }.launch()
 
-        val userRegisterParams = UserRegisterParams(
+        val userSaveParams = UserSaveParams(
             loginId = "user",
             password = "password1",
             confirmPassword = "password2",
@@ -97,7 +97,7 @@ internal class UserControllerTest {
             birthday = LocalDate.now()
         )
         assertThrows(HttpClientResponseException::class.java) {
-            userClient.register(userRegisterParams)
+            userClient.save(userSaveParams)
         }
     }
 
@@ -105,13 +105,13 @@ internal class UserControllerTest {
      * バリデーションが実施されることを確認する
      */
     @Test
-    fun register_validate() {
+    fun save_validate() {
 
         dbSetup(dataSource) {
             deleteAll()
         }.launch()
 
-        val userRegisterParams = UserRegisterParams(
+        val userSaveParams = UserSaveParams(
             loginId = "",
             password = "",
             confirmPassword = "",
@@ -119,7 +119,7 @@ internal class UserControllerTest {
             birthday = LocalDate.now()
         )
         assertThrows(ConstraintViolationException::class.java) {
-            userClient.register(userRegisterParams)
+            userClient.save(userSaveParams)
         }
     }
 

@@ -2,7 +2,7 @@ package com.ikkun2501.bookmanagement.interfaces.user
 
 import com.ikkun2501.bookmanagement.domain.User
 import com.ikkun2501.bookmanagement.usecase.command.user.UserDetailUpdateParams
-import com.ikkun2501.bookmanagement.usecase.command.user.UserRegisterParams
+import com.ikkun2501.bookmanagement.usecase.command.user.UserSaveParams
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Header
 import io.micronaut.http.annotation.Post
@@ -20,11 +20,11 @@ interface UserOperations {
     /**
      * 登録
      *
-     * @param userRegisterParams ユーザ登録パラメータ
+     * @param userSaveParams ユーザ登録パラメータ
      * @return ユーザ
      */
     @Post("/")
-    fun register(@Valid @Body userRegisterParams: UserRegisterParams): User
+    fun save(@Valid @Body userSaveParams: UserSaveParams): User
 
     @Put("/detail")
     fun detailUpdate(@Header("Authorization") token: String, @Valid @Body userDetailUpdateParams: UserDetailUpdateParams): User

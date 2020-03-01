@@ -1,9 +1,9 @@
 package com.ikkun2501.bookmanagement.interfaces.user
 
 import com.ikkun2501.bookmanagement.domain.User
-import com.ikkun2501.bookmanagement.usecase.command.user.UserCommand
+import com.ikkun2501.bookmanagement.usecase.command.user.UserCommandService
 import com.ikkun2501.bookmanagement.usecase.command.user.UserDetailUpdateParams
-import com.ikkun2501.bookmanagement.usecase.command.user.UserRegisterParams
+import com.ikkun2501.bookmanagement.usecase.command.user.UserSaveParams
 import io.micronaut.http.annotation.Controller
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
@@ -11,19 +11,19 @@ import io.micronaut.security.rules.SecurityRule
 /**
  * UserApi
  *
- * @property userCommand 更新系のユースケース
+ * @property userCommandService 更新系のユースケース
  */
 @Controller("/users")
-class UserController(private val userCommand: UserCommand) : UserOperations {
+class UserController(private val userCommandService: UserCommandService) : UserOperations {
 
     @Secured(SecurityRule.IS_ANONYMOUS)
-    override fun register(userRegisterParams: UserRegisterParams): User {
+    override fun save(userSaveParams: UserSaveParams): User {
 
-        if (userRegisterParams.password != userRegisterParams.confirmPassword) {
+        if (userSaveParams.password != userSaveParams.confirmPassword) {
             TODO("passwordが一致していません")
         }
 
-        return userCommand.register(userRegisterParams)
+        return userCommandService.save(userSaveParams)
     }
 
     @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -32,6 +32,6 @@ class UserController(private val userCommand: UserCommand) : UserOperations {
         // TODO ログインユーザのUserIDとパラメーターのUserIDが等しいか確認する
         // ThreadLocalかリクエストスコープのBeanでログインしているユーザを表現したい
 
-        return userCommand.updateUserDetail(userDetailUpdateParams)
+        return userCommandService.updateUserDetail(userDetailUpdateParams)
     }
 }

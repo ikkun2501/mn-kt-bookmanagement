@@ -13,11 +13,11 @@ import javax.inject.Singleton
  */
 @Transactional
 @Singleton
-class BookCommand(val bookRepository: BookRepository) {
+class BookCommandService(val bookRepository: BookRepository) {
 
-    fun register(registerParams: BookRegisterParams): Book {
+    fun save(saveParams: BookSaveParams): Book {
 
-        val book = registerParams.run {
+        val book = saveParams.run {
             Book(
                 bookId = SequenceId.notAssigned(),
                 description = description,
@@ -25,7 +25,7 @@ class BookCommand(val bookRepository: BookRepository) {
                 title = title
             )
         }
-        return bookRepository.register(book)
+        return bookRepository.save(book)
     }
 
     fun update(updateParams: BookUpdateParams): Book {

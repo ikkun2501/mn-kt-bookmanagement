@@ -15,7 +15,7 @@ import javax.inject.Singleton
 
 @Transactional
 @Singleton
-class UserCommand(val userRepository: UserRepository) {
+class UserCommandService(val userRepository: UserRepository) {
 
     /**
      * ユーザ認証
@@ -39,16 +39,16 @@ class UserCommand(val userRepository: UserRepository) {
     /**
      * ユーザ登録
      *
-     * @param userRegisterParams
+     * @param userSaveParams
      * @return
      */
-    fun register(userRegisterParams: UserRegisterParams): User {
+    fun save(userSaveParams: UserSaveParams): User {
 
         // ログインIDが既に登録されていたら
-        if (userRepository.findByLoginId(userRegisterParams.loginId) != null) {
+        if (userRepository.findByLoginId(userSaveParams.loginId) != null) {
             throw DuplicateException()
         }
-        val user = userRegisterParams.run {
+        val user = userSaveParams.run {
             User(
                 userId = SequenceId.notAssigned(),
                 loginId = loginId,
@@ -59,7 +59,7 @@ class UserCommand(val userRepository: UserRepository) {
             )
         }
 
-        return userRepository.register(user)
+        return userRepository.save(user)
     }
 
     /**

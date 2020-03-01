@@ -20,7 +20,7 @@ class JqBookRepositoryImpl(
         return dsl.fetchOne(BOOK, BOOK.BOOK_ID.eq(bookId)).toObject()
     }
 
-    override fun register(book: Book): Book {
+    override fun save(book: Book): Book {
         val record = dsl.newRecord(BOOK)
             .values(null, book.authorId.value, book.title, book.description)
         record.store()

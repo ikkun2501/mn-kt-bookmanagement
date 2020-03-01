@@ -14,7 +14,7 @@ import javax.validation.constraints.Size
  * @property confirmPassword
  */
 @Introspected
-data class UserRegisterParams(
+data class UserSaveParams(
     @field:NotBlank
     val loginId: String,
     @field:Size(min = 8)

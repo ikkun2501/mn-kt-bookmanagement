@@ -12,7 +12,7 @@ import javax.validation.constraints.Size
  * @property description
  */
 @Introspected
-data class BookRegisterParams(
+data class BookSaveParams(
     @field:NotBlank
     val title: String,
     val authorId: Int,
