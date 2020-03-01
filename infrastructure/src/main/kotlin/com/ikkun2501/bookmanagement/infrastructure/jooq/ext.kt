@@ -1,6 +1,7 @@
 package com.ikkun2501.bookmanagement.infrastructure.jooq
 
 import com.ikkun2501.bookmanagement.domain.Book
+import com.ikkun2501.bookmanagement.domain.EncodedPassword
 import com.ikkun2501.bookmanagement.domain.SequenceId
 import com.ikkun2501.bookmanagement.domain.User
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables
@@ -63,7 +64,7 @@ fun toUser(
     return User(
         userId = SequenceId(detail.userId),
         loginId = authentication.loginId,
-        password = authentication.password,
+        password = EncodedPassword(authentication.password),
         roles = authorizations.map { it.userRole },
         birthday = detail.birthday,
         userName = detail.userName

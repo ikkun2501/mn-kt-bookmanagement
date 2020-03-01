@@ -21,6 +21,9 @@ dependencies {
     implementation "io.micronaut.configuration:micronaut-jdbc-hikari"
     implementation "javax.annotation:javax.annotation-api"
 
+    // BCrypt
+    implementation "org.springframework.security:spring-security-crypto:${springSecurityCryptoVersion}"
+
     // DB
     implementation ('io.micronaut.configuration:micronaut-jooq') {
         exclude module: 'org.jooq:jooq'

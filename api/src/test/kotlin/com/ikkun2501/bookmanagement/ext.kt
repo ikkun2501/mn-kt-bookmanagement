@@ -1,6 +1,5 @@
 package com.ikkun2501.bookmanagement
 
-import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.AUTHOR
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.BOOK
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.USER
@@ -11,7 +10,9 @@ import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.UserA
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.UserAuthorizationRecord
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.UserDetailRecord
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.UserRecord
+import com.ikkun2501.bookmanagement.interfaces.AuthClient
 import com.ninja_squad.dbsetup_kotlin.DbSetupBuilder
+import io.micronaut.security.authentication.UsernamePasswordCredentials
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -29,24 +30,34 @@ fun DbSetupBuilder.deleteAll() {
 
 private val passwordEncoder = BCryptPasswordEncoder()
 fun DbSetupBuilder.insertDefaultUser() {
-    insertInto(Tables.USER.name) {
+    insertInto(USER.name) {
         values(UserRecord(1, LocalDateTime.now()).intoMap())
     }
-    insertInto(Tables.USER_DETAIL.name) {
-        values(UserDetailRecord(1, "ユーザ名", LocalDate.now(), LocalDateTime.now()).intoMap())
+    insertInto(USER_DETAIL.name) {
+        values(UserDetailRecord(1, "ユーザ名", LocalDate.now()).intoMap())
     }
-    insertInto(Tables.USER_AUTHENTICATION.name) {
+    insertInto(USER_AUTHENTICATION.name) {
         values(
             UserAuthenticationRecord(
                 1,
                 "loginId",
-                passwordEncoder.encode("password"),
-                LocalDateTime.now()
+                passwordEncoder.encode("password")
             ).intoMap()
         )
     }
-    insertInto(Tables.USER_AUTHORIZATION.name) {
-        values(UserAuthorizationRecord(1, "ROLE_ADMIN", LocalDateTime.now()).intoMap())
-        values(UserAuthorizationRecord(1, "ROLE_USER", LocalDateTime.now()).intoMap())
+    insertInto(USER_AUTHORIZATION.name) {
+        values(UserAuthorizationRecord(1, "ROLE_ADMIN").intoMap())
+        values(UserAuthorizationRecord(1, "ROLE_USER").intoMap())
     }
+}
+
+/**
+ * デフォルトユーザでログイン
+ *
+ * @return Token
+ */
+fun AuthClient.defaultUserLogin(): String {
+    return this
+        .login(UsernamePasswordCredentials("loginId", "password"))
+        .let { "Bearer ${it.accessToken}" }
 }
