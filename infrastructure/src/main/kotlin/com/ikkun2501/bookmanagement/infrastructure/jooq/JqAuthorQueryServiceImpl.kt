@@ -1,9 +1,7 @@
-package com.ikkun2501.authormanagement.infrastructure.jooq
+package com.ikkun2501.bookmanagement.infrastructure.jooq
 
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Keys
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.AUTHOR
-import com.ikkun2501.bookmanagement.infrastructure.jooq.toAuthorDetail
-import com.ikkun2501.bookmanagement.infrastructure.jooq.toAuthorSearchResult
 import com.ikkun2501.bookmanagement.usecase.query.author.AuthorDetail
 import com.ikkun2501.bookmanagement.usecase.query.author.AuthorQueryService
 import com.ikkun2501.bookmanagement.usecase.query.author.AuthorSearchParams

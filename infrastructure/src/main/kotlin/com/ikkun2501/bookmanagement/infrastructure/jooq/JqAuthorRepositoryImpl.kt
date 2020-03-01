@@ -1,10 +1,9 @@
-package com.ikkun2501.authormanagement.infrastructure.jooq
+package com.ikkun2501.bookmanagement.infrastructure.jooq
 
 import com.ikkun2501.bookmanagement.domain.Author
 import com.ikkun2501.bookmanagement.domain.AuthorRepository
 import com.ikkun2501.bookmanagement.domain.SequenceId
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.AUTHOR
-import com.ikkun2501.bookmanagement.infrastructure.jooq.toObject
 import org.jooq.DSLContext
 import javax.inject.Singleton
 
