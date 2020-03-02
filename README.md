@@ -56,4 +56,13 @@ FlywayのGradle Pluginを導入しており、次の表に記載したコマン�
 | 開発 | flywayMigrate | 
 | ユニットテスト | unitFlywayMigrate | 
 
-
+# TODO
+* [ ] OpenAPI導入
+* [ ] Client実装（react）
+* [ ] github actions
+    * [ ] ktlint
+    * [ ] test
+* [ ] EXPOSEによる実装
+    * [ ] 環境変数による切り替え    
+* [ ] coroutineによる実装 
+* [ ] AWSにデプロイ
