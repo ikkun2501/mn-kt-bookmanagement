@@ -1,18 +1,18 @@
 package com.ikkun2501.bookmanagement.interfaces
 
+import com.ikkun2501.bookmanagement.defaultUserLogin
 import com.ikkun2501.bookmanagement.deleteAll
-import com.ikkun2501.bookmanagement.domain.BookRepository
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.AUTHOR
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.BOOK
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.AuthorRecord
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.BookRecord
 import com.ikkun2501.bookmanagement.insertDefaultUser
-import com.ikkun2501.bookmanagement.usecase.command.book.BookSaveParams
-import com.ikkun2501.bookmanagement.usecase.command.book.BookUpdateParams
+import com.ikkun2501.bookmanagement.interfaces.book.BookSaveRequest
+import com.ikkun2501.bookmanagement.interfaces.book.BookUpdateRequest
 import com.ikkun2501.bookmanagement.usecase.query.book.BookDetail
-import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchParams
+import com.ikkun2501.bookmanagement.usecase.query.book.BookQueryService
+import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchRequest
 import com.ninja_squad.dbsetup_kotlin.dbSetup
-import io.micronaut.security.authentication.UsernamePasswordCredentials
 import io.micronaut.test.annotation.MicronautTest
 import org.jooq.DSLContext
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -30,6 +30,7 @@ import javax.validation.ConstraintViolationException
  */
 @MicronautTest
 internal class BookControllerTest {
+
     @Inject
     lateinit var dataSource: DataSource
 
@@ -40,18 +41,12 @@ internal class BookControllerTest {
     lateinit var authClient: AuthClient
 
     @Inject
-    lateinit var bookRepository: BookRepository
+    lateinit var bookQueryService: BookQueryService
 
     @Inject
     lateinit var dsl: DSLContext
 
     private val logger = LoggerFactory.getLogger(this.javaClass)
-
-    private fun token(): String {
-        return authClient
-            .login(UsernamePasswordCredentials("loginId", "password"))
-            .let { "Bearer ${it.accessToken}" }
-    }
 
     /**
      * 登録テスト
@@ -67,20 +62,21 @@ internal class BookControllerTest {
             }
         }.launch()
 
-        val bookSaveParams = BookSaveParams(
+        val bookSaveParams = BookSaveRequest(
             title = "タイトル",
             authorId = 1,
             description = "書籍説明"
         )
 
-        val returnBook = bookClient.save(token(), bookSaveParams)
+        val returnBookDetail = bookClient.save(authClient.defaultUserLogin(), bookSaveParams)
 
-        assertEquals(bookSaveParams.title, returnBook.title)
-        assertEquals(bookSaveParams.authorId, returnBook.authorId.value)
-        assertEquals(bookSaveParams.description, returnBook.description)
+        assertEquals(bookSaveParams.title, returnBookDetail.title)
+        assertEquals(bookSaveParams.authorId, returnBookDetail.authorId)
+        assertEquals(bookSaveParams.description, returnBookDetail.bookDescription)
+        assertEquals("著者説明", returnBookDetail.authorDescription)
 
-        val dbBook = bookRepository.findById(returnBook.bookId.value)!!
-        assertEquals(dbBook, returnBook)
+        val dbBook = bookQueryService.detail(returnBookDetail.bookId)
+        assertEquals(dbBook, returnBookDetail)
     }
 
     /**
@@ -96,7 +92,7 @@ internal class BookControllerTest {
 
         assertThrows<ConstraintViolationException>("") {
             bookClient.save(
-                token(), BookSaveParams(title = "", authorId = 1, description = "書籍説明")
+                authClient.defaultUserLogin(), BookSaveRequest(title = "", authorId = 1, description = "書籍説明")
             )
         }
     }
@@ -121,22 +117,22 @@ internal class BookControllerTest {
             }
         }.launch()
 
-        val bookUpdateParams = BookUpdateParams(
+        val request = BookUpdateRequest(
             bookId = bookId,
             title = "タイトル２",
             description = "",
             authorId = 2
         )
 
-        val returnBook = bookClient.update(token(), bookUpdateParams)
+        val returnBook = bookClient.update(authClient.defaultUserLogin(), request)
 
         assertAll("Book",
-            { assertEquals(bookUpdateParams.bookId, returnBook.bookId.value) },
-            { assertEquals(bookUpdateParams.title, returnBook.title) },
-            { assertEquals(bookUpdateParams.authorId, returnBook.authorId.value) }
+            { assertEquals(request.bookId, returnBook.bookId) },
+            { assertEquals(request.title, returnBook.title) },
+            { assertEquals(request.authorId, returnBook.authorId) }
         )
 
-        val dbBook = bookRepository.findById(bookUpdateParams.bookId)!!
+        val dbBook = bookQueryService.detail(request.bookId)
         assertEquals(returnBook, dbBook)
     }
 
@@ -153,7 +149,7 @@ internal class BookControllerTest {
 
         assertThrows<ConstraintViolationException>("") {
             bookClient.update(
-                token(), BookUpdateParams(bookId = 1, title = "", authorId = 1, description = "書籍説明")
+                authClient.defaultUserLogin(), BookUpdateRequest(bookId = 1, title = "", authorId = 1, description = "書籍説明")
             )
         }
     }
@@ -174,7 +170,7 @@ internal class BookControllerTest {
             }
         }.launch()
 
-        bookClient.delete(token(), bookId)
+        bookClient.delete(authClient.defaultUserLogin(), bookId)
 
         assertEquals(0, dsl.fetchCount(BOOK))
     }
@@ -201,7 +197,7 @@ internal class BookControllerTest {
             }
         }.launch()
 
-        val returnBookDetail = bookClient.show(token(), book.bookId)
+        val returnBookDetail = bookClient.show(authClient.defaultUserLogin(), book.bookId)
 
         val expectedBookDetail = BookDetail(
             bookId = book.bookId,
@@ -234,7 +230,7 @@ internal class BookControllerTest {
         }.launch()
 
         val bookSearchResult = bookClient.search(
-            token(), BookSearchParams(keyword = "", page = 1, limit = 100)
+            authClient.defaultUserLogin(), BookSearchRequest(keyword = "", page = 1, limit = 100)
         )
 
         assertEquals(1, bookSearchResult.size)
@@ -258,17 +254,17 @@ internal class BookControllerTest {
             }
         }.launch()
 
-        val searchParams = BookSearchParams(keyword = "", page = 1, limit = 100)
+        val searchParams = BookSearchRequest(keyword = "", page = 1, limit = 100)
 
-        assertEquals(1, bookClient.search(token(), searchParams.copy(keyword = "タイトル")).size)
-        assertEquals(1, bookClient.search(token(), searchParams.copy(keyword = "タイ")).size)
-        assertEquals(1, bookClient.search(token(), searchParams.copy(keyword = "トル")).size)
-        assertEquals(1, bookClient.search(token(), searchParams.copy(keyword = "著者名")).size)
-        assertEquals(1, bookClient.search(token(), searchParams.copy(keyword = "著者")).size)
-        assertEquals(1, bookClient.search(token(), searchParams.copy(keyword = "者名")).size)
+        assertEquals(1, bookClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = "タイトル")).size)
+        assertEquals(1, bookClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = "タイ")).size)
+        assertEquals(1, bookClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = "トル")).size)
+        assertEquals(1, bookClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = "著者名")).size)
+        assertEquals(1, bookClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = "著者")).size)
+        assertEquals(1, bookClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = "者名")).size)
 
-        assertEquals(0, bookClient.search(token(), searchParams.copy(keyword = "タイトル1")).size)
-        assertEquals(0, bookClient.search(token(), searchParams.copy(keyword = "著者名1")).size)
+        assertEquals(0, bookClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = "タイトル1")).size)
+        assertEquals(0, bookClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = "著者名1")).size)
     }
 
     @Test
@@ -292,8 +288,8 @@ internal class BookControllerTest {
             }
         }.launch()
 
-        val searchParams = BookSearchParams(keyword = "", page = 2, limit = 10)
-        val result = bookClient.search(token(), searchParams)
+        val searchParams = BookSearchRequest(keyword = "", page = 2, limit = 10)
+        val result = bookClient.search(authClient.defaultUserLogin(), searchParams)
         assertIterableEquals((11..20).toList(), result.map { it.bookId })
     }
 
@@ -315,8 +311,8 @@ internal class BookControllerTest {
             }
         }.launch()
 
-        val searchParams = BookSearchParams(keyword = "", page = 1, limit = 10)
-        val result = bookClient.search(token(), searchParams)
+        val searchParams = BookSearchRequest(keyword = "", page = 1, limit = 10)
+        val result = bookClient.search(authClient.defaultUserLogin(), searchParams)
         assertIterableEquals((5 downTo 1).toList(), result.map { it.bookId })
     }
 }

@@ -56,8 +56,14 @@ FlywayのGradle Pluginを導入しており、次の表に記載したコマン�
 | 開発 | flywayMigrate | 
 | ユニットテスト | unitFlywayMigrate | 
 
+# OPEN API
+コンパイルすると次のパスにymlファイルが出力されます。
+```
+api/build/tmp/kapt3/classes/main/META-INF/swagger/mn-kotlin-openapi-app-1.0.yml
+```
+
 # TODO
-* [ ] OpenAPI導入
+* [x] OpenAPI導入
 * [ ] Client実装（react）
 * [ ] github actions
     * [ ] ktlint

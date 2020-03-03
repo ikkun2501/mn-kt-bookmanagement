@@ -1,23 +1,21 @@
-package com.ikkun2501.bookmanagement.usecase.command.book
+package com.ikkun2501.bookmanagement.interfaces.book
 
 import io.micronaut.core.annotation.Introspected
 import javax.validation.constraints.NotBlank
 import javax.validation.constraints.Size
 
 /**
- * 書籍更新パラメータ
+ * 書籍登録パラメータ
  *
- * @property bookId
  * @property title
- * @property description
  * @property authorId
+ * @property description
  */
 @Introspected
-data class BookUpdateParams(
-    val bookId: Int,
+data class BookSaveRequest(
     @field:NotBlank
     val title: String,
+    val authorId: Int,
     @field:Size(max = 2000)
-    val description: String,
-    val authorId: Int
+    val description: String
 )

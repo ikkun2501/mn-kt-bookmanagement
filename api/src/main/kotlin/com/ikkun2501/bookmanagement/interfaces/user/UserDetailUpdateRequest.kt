@@ -1,4 +1,4 @@
-package com.ikkun2501.bookmanagement.usecase.command.user
+package com.ikkun2501.bookmanagement.interfaces.user
 
 import io.micronaut.core.annotation.Introspected
 import java.time.LocalDate
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank
  *
  */
 @Introspected
-data class UserDetailUpdateParams(
+data class UserDetailUpdateRequest(
     val userId: Int,
     @field:NotBlank
     val userName: String,

@@ -5,5 +5,5 @@ package com.ikkun2501.bookmanagement.usecase.query.book
  */
 interface BookQueryService {
     fun detail(bookId: Int): BookDetail
-    fun search(bookSearchParams: BookSearchParams): List<BookSearchResultRow>
+    fun search(bookSearchRequest: BookSearchRequest): List<BookSearchResultRow>
 }

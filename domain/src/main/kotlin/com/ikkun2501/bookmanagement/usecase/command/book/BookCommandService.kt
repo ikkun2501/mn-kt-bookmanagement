@@ -15,32 +15,32 @@ import javax.inject.Singleton
 @Singleton
 class BookCommandService(val bookRepository: BookRepository) {
 
-    fun save(saveParams: BookSaveParams): Book {
-        val book = saveParams.run {
+    fun save(saveCommand: BookSaveCommand): Book {
+        val book = saveCommand.run {
             Book(
                 bookId = SequenceId.notAssigned(),
                 description = description,
-                authorId = SequenceId(authorId),
+                authorId = authorId,
                 title = title
             )
         }
         return bookRepository.save(book)
     }
 
-    fun update(updateParams: BookUpdateParams): Book {
-        val book = bookRepository.findById(updateParams.bookId) ?: throw NotFoundException()
+    fun update(updateCommand: BookUpdateCommand): Book {
+        val book = bookRepository.findById(updateCommand.bookId) ?: throw NotFoundException()
 
-        return updateParams.run {
+        return updateCommand.run {
             book.copy(
-                bookId = SequenceId(bookId),
+                bookId = bookId,
                 title = title,
-                authorId = SequenceId(authorId),
+                authorId = authorId,
                 description = description
             )
         }.run(bookRepository::update)
     }
 
-    fun delete(bookId: Int) {
+    fun delete(bookId: SequenceId<Book>) {
         bookRepository.delete(bookId)
     }
 }

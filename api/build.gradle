@@ -49,6 +49,10 @@ dependencies {
     // test
     testImplementation "com.ninja-squad:DbSetup:2.1.0"
     testImplementation "com.ninja-squad:DbSetup-kotlin:2.1.0"
+
+    // openapi
+    kapt "io.micronaut.configuration:micronaut-openapi"
+    implementation "io.swagger.core.v3:swagger-annotations"
 }
 
 test.classpath += configurations.developmentOnly

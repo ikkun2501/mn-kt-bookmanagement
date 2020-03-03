@@ -1,8 +1,6 @@
 package com.ikkun2501.bookmanagement.interfaces.user
 
-import com.ikkun2501.bookmanagement.domain.User
-import com.ikkun2501.bookmanagement.usecase.command.user.UserDetailUpdateParams
-import com.ikkun2501.bookmanagement.usecase.command.user.UserSaveParams
+import com.ikkun2501.bookmanagement.usecase.query.user.UserDetail
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Header
 import io.micronaut.http.annotation.Post
@@ -20,12 +18,12 @@ interface UserOperations {
     /**
      * 登録
      *
-     * @param userSaveParams ユーザ登録パラメータ
+     * @param userSaveRequest ユーザ登録パラメータ
      * @return ユーザ
      */
     @Post("/")
-    fun save(@Valid @Body userSaveParams: UserSaveParams): User
+    fun save(@Valid @Body request: UserSaveRequest): UserDetail
 
     @Put("/detail")
-    fun detailUpdate(@Header("Authorization") token: String, @Valid @Body userDetailUpdateParams: UserDetailUpdateParams): User
+    fun detailUpdate(@Header("Authorization") token: String, @Valid @Body request: UserDetailUpdateRequest): UserDetail
 }

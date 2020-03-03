@@ -1,4 +1,4 @@
-package com.ikkun2501.bookmanagement.usecase.command.user
+package com.ikkun2501.bookmanagement.interfaces.user
 
 import io.micronaut.core.annotation.Introspected
 import java.time.LocalDate
@@ -14,7 +14,7 @@ import javax.validation.constraints.Size
  * @property confirmPassword
  */
 @Introspected
-data class UserSaveParams(
+data class UserSaveRequest(
     @field:NotBlank
     val loginId: String,
     @field:Size(min = 8)
