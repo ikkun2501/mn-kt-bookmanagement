@@ -1,6 +1,5 @@
 package com.ikkun2501.bookmanagement.infrastructure.jooq
 
-import com.ikkun2501.bookmanagement.domain.EncodedPassword
 import com.ikkun2501.bookmanagement.domain.SequenceId
 import com.ikkun2501.bookmanagement.domain.User
 import com.ikkun2501.bookmanagement.domain.UserRepository
@@ -26,22 +25,16 @@ class JqUserRepositoryImpl(
         val userAuthentication =
             dsl.fetchOne(USER_AUTHENTICATION, USER_AUTHENTICATION.LOGIN_ID.eq(loginId)) ?: return null
 
-        return findByUserId(userAuthentication.userId)
+        return findByUserId(SequenceId(userAuthentication.userId))
     }
 
-    override fun findByUserId(userId: Int): User? {
-        val detail = dsl.fetchOne(USER_DETAIL, USER_DETAIL.USER_ID.eq(userId)) ?: return null
-        val authorization = dsl.fetch(USER_AUTHORIZATION, USER_AUTHORIZATION.USER_ID.eq(userId)).toList()
-        val authentication = dsl.fetchOne(USER_AUTHENTICATION, USER_AUTHENTICATION.USER_ID.eq(userId)) ?: return null
+    override fun findByUserId(userId: SequenceId<User>): User? {
+        val detail = dsl.fetchOne(USER_DETAIL, USER_DETAIL.USER_ID.eq(userId.value)) ?: return null
+        val authorizations = dsl.fetch(USER_AUTHORIZATION, USER_AUTHORIZATION.USER_ID.eq(userId.value)).toList()
+        val authentication =
+            dsl.fetchOne(USER_AUTHENTICATION, USER_AUTHENTICATION.USER_ID.eq(userId.value)) ?: return null
 
-        return User(
-            userId = SequenceId(detail.userId),
-            userName = detail.userName,
-            birthday = detail.birthday,
-            roles = authorization.map { it.userRole },
-            loginId = authentication.loginId,
-            password = EncodedPassword(authentication.password)
-        )
+        return toUser(detail, authentication, authorizations)
     }
 
     override fun save(user: User): User {
@@ -60,7 +53,7 @@ class JqUserRepositoryImpl(
                 .values(userRecord.userId, it).store()
         }
 
-        return requireNotNull(findByUserId(userRecord.userId))
+        return requireNotNull(findByUserId(SequenceId(userRecord.userId)))
     }
 
     override fun update(user: User): User {
@@ -80,6 +73,6 @@ class JqUserRepositoryImpl(
                 .values(user.userId.value, it).store()
         }
 
-        return requireNotNull(findByUserId(user.userId.value))
+        return requireNotNull(findByUserId(user.userId))
     }
 }

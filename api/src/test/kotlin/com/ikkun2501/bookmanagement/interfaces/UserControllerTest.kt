@@ -2,23 +2,18 @@ package com.ikkun2501.bookmanagement.interfaces
 
 import com.ikkun2501.bookmanagement.defaultUserLogin
 import com.ikkun2501.bookmanagement.deleteAll
-import com.ikkun2501.bookmanagement.domain.UserRepository
 import com.ikkun2501.bookmanagement.insertDefaultUser
-import com.ikkun2501.bookmanagement.usecase.command.user.UserDetailUpdateParams
-import com.ikkun2501.bookmanagement.usecase.command.user.UserSaveParams
+import com.ikkun2501.bookmanagement.interfaces.user.UserDetailUpdateRequest
+import com.ikkun2501.bookmanagement.interfaces.user.UserSaveRequest
+import com.ikkun2501.bookmanagement.usecase.query.user.UserQueryService
 import com.ninja_squad.dbsetup_kotlin.dbSetup
 import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.test.annotation.MicronautTest
-import org.jooq.DSLContext
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertIterableEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
-import org.slf4j.LoggerFactory
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.sql.DataSource
@@ -33,20 +28,13 @@ internal class UserControllerTest {
     lateinit var dataSource: DataSource
 
     @Inject
-    lateinit var userRepository: UserRepository
-
-    @Inject
     lateinit var userClient: UserClient
 
     @Inject
     lateinit var authClient: AuthClient
 
     @Inject
-    lateinit var dsl: DSLContext
-
-    private val logger = LoggerFactory.getLogger(this.javaClass)
-
-    private val passwordEncoder = BCryptPasswordEncoder()
+    lateinit var userQueryService: UserQueryService
 
     /**
      * 登録テスト
@@ -58,7 +46,7 @@ internal class UserControllerTest {
             deleteAll()
         }.launch()
 
-        val userSaveParams = UserSaveParams(
+        val request = UserSaveRequest(
             loginId = "user",
             password = "password",
             confirmPassword = "password",
@@ -66,16 +54,14 @@ internal class UserControllerTest {
             birthday = LocalDate.now()
         )
 
-        val returnUser = userClient.save(userSaveParams)
+        val returnUser = userClient.save(request)
 
         assertAll(
-            { assertEquals(userSaveParams.loginId, returnUser.loginId) },
-            { assertEquals(userSaveParams.userName, returnUser.userName) },
-            { assertIterableEquals(listOf("ROLE_USER"), returnUser.roles) },
-            { assertTrue(returnUser.password.matches(userSaveParams.password)) }
+            { assertEquals(request.userName, returnUser.userName) },
+            { assertEquals(returnUser.birthday, request.birthday) }
         )
 
-        val dbUser = userRepository.findByUserId(returnUser.userId.value)!!
+        val dbUser = userQueryService.detail(returnUser.userId)
         assertEquals(returnUser, dbUser)
     }
 
@@ -89,7 +75,7 @@ internal class UserControllerTest {
             deleteAll()
         }.launch()
 
-        val userSaveParams = UserSaveParams(
+        val userSaveRequest = UserSaveRequest(
             loginId = "user",
             password = "password1",
             confirmPassword = "password2",
@@ -97,7 +83,7 @@ internal class UserControllerTest {
             birthday = LocalDate.now()
         )
         assertThrows(HttpClientResponseException::class.java) {
-            userClient.save(userSaveParams)
+            userClient.save(userSaveRequest)
         }
     }
 
@@ -111,7 +97,7 @@ internal class UserControllerTest {
             deleteAll()
         }.launch()
 
-        val userSaveParams = UserSaveParams(
+        val userSaveRequest = UserSaveRequest(
             loginId = "",
             password = "",
             confirmPassword = "",
@@ -119,7 +105,7 @@ internal class UserControllerTest {
             birthday = LocalDate.now()
         )
         assertThrows(ConstraintViolationException::class.java) {
-            userClient.save(userSaveParams)
+            userClient.save(userSaveRequest)
         }
     }
 
@@ -131,19 +117,19 @@ internal class UserControllerTest {
             insertDefaultUser()
         }.launch()
 
-        val params = UserDetailUpdateParams(
+        val request = UserDetailUpdateRequest(
             userId = 1,
             userName = "userName2",
             birthday = LocalDate.of(2000, 1, 1)
         )
 
-        val returnUser = userClient.detailUpdate(authClient.defaultUserLogin(), params)
+        val returnUser = userClient.detailUpdate(authClient.defaultUserLogin(), request)
 
-        assertEquals(params.userId, returnUser.userId.value)
-        assertEquals(params.userName, returnUser.userName)
-        assertEquals(params.birthday, returnUser.birthday)
+        assertEquals(request.userId, returnUser.userId)
+        assertEquals(request.userName, returnUser.userName)
+        assertEquals(request.birthday, returnUser.birthday)
 
-        val dbUser = userRepository.findByUserId(params.userId)!!
+        val dbUser = userQueryService.detail(request.userId)
 
         assertEquals(returnUser, dbUser)
     }
@@ -156,13 +142,13 @@ internal class UserControllerTest {
             insertDefaultUser()
         }.launch()
 
-        val params = UserDetailUpdateParams(
+        val request = UserDetailUpdateRequest(
             userId = 1,
             userName = "",
             birthday = LocalDate.of(2000, 1, 1)
         )
         assertThrows(ConstraintViolationException::class.java) {
-            userClient.detailUpdate(authClient.defaultUserLogin(), params)
+            userClient.detailUpdate(authClient.defaultUserLogin(), request)
         }
     }
 
@@ -174,13 +160,13 @@ internal class UserControllerTest {
             insertDefaultUser()
         }.launch()
 
-        val params = UserDetailUpdateParams(
+        val request = UserDetailUpdateRequest(
             userId = 9999,
             userName = "userName",
             birthday = LocalDate.of(2000, 1, 1)
         )
         // 404 error
         // https://github.com/micronaut-projects/micronaut-core/issues/1188
-        assertNull(userClient.detailUpdate(authClient.defaultUserLogin(), params))
+        assertNull(userClient.detailUpdate(authClient.defaultUserLogin(), request))
     }
 }

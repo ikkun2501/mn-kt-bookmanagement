@@ -1,9 +1,11 @@
 package com.ikkun2501.bookmanagement.interfaces.user
 
-import com.ikkun2501.bookmanagement.domain.User
+import com.ikkun2501.bookmanagement.domain.SequenceId
 import com.ikkun2501.bookmanagement.usecase.command.user.UserCommandService
-import com.ikkun2501.bookmanagement.usecase.command.user.UserDetailUpdateParams
-import com.ikkun2501.bookmanagement.usecase.command.user.UserSaveParams
+import com.ikkun2501.bookmanagement.usecase.command.user.UserDetailUpdateCommand
+import com.ikkun2501.bookmanagement.usecase.command.user.UserSaveCommand
+import com.ikkun2501.bookmanagement.usecase.query.user.UserDetail
+import com.ikkun2501.bookmanagement.usecase.query.user.UserQueryService
 import io.micronaut.http.annotation.Controller
 import io.micronaut.security.annotation.Secured
 import io.micronaut.security.rules.SecurityRule
@@ -14,24 +16,45 @@ import io.micronaut.security.rules.SecurityRule
  * @property userCommandService 更新系のユースケース
  */
 @Controller("/users")
-class UserController(private val userCommandService: UserCommandService) : UserOperations {
+class UserController(
+    private val userCommandService: UserCommandService,
+    private val userQueryService: UserQueryService
+) : UserOperations {
 
     @Secured(SecurityRule.IS_ANONYMOUS)
-    override fun save(userSaveParams: UserSaveParams): User {
+    override fun save(request: UserSaveRequest): UserDetail {
 
-        if (userSaveParams.password != userSaveParams.confirmPassword) {
+        if (request.password != request.confirmPassword) {
             TODO("passwordが一致していません")
         }
 
-        return userCommandService.save(userSaveParams)
+        val command = request.run {
+            UserSaveCommand(
+                loginId = loginId,
+                birthday = birthday,
+                password = password,
+                userName = userName
+            )
+        }
+        return userCommandService.save(command).run {
+            userQueryService.detail(this.userId.value)
+        }
     }
 
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    override fun detailUpdate(token: String, userDetailUpdateParams: UserDetailUpdateParams): User {
+    override fun detailUpdate(token: String, request: UserDetailUpdateRequest): UserDetail {
 
         // TODO ログインユーザのUserIDとパラメーターのUserIDが等しいか確認する
-        // ThreadLocalかリクエストスコープのBeanでログインしているユーザを表現したい
 
-        return userCommandService.updateUserDetail(userDetailUpdateParams)
+        val command = request.run {
+            UserDetailUpdateCommand(
+                userId = SequenceId(userId),
+                userName = userName,
+                birthday = birthday
+            )
+        }
+        return userCommandService.updateUserDetail(command).run {
+            userQueryService.detail(this.userId.value)
+        }
     }
 }

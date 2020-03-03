@@ -1,8 +1,9 @@
 package com.ikkun2501.bookmanagement.infrastructure.jooq
 
-import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.BOOK
 import com.ikkun2501.bookmanagement.domain.Book
 import com.ikkun2501.bookmanagement.domain.BookRepository
+import com.ikkun2501.bookmanagement.domain.SequenceId
+import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.BOOK
 import org.jooq.DSLContext
 import javax.inject.Singleton
 
@@ -16,8 +17,8 @@ class JqBookRepositoryImpl(
     val dsl: DSLContext
 ) : BookRepository {
 
-    override fun findById(bookId: Int): Book? {
-        return dsl.fetchOne(BOOK, BOOK.BOOK_ID.eq(bookId)).toObject()
+    override fun findById(bookId: SequenceId<Book>): Book? {
+        return dsl.fetchOne(BOOK, BOOK.BOOK_ID.eq(bookId.value)).toObject()
     }
 
     override fun save(book: Book): Book {
@@ -34,7 +35,7 @@ class JqBookRepositoryImpl(
         return record.toObject()
     }
 
-    override fun delete(bookId: Int) {
-        dsl.deleteFrom(BOOK).where(BOOK.BOOK_ID.eq(bookId)).execute()
+    override fun delete(bookId: SequenceId<Book>) {
+        dsl.deleteFrom(BOOK).where(BOOK.BOOK_ID.eq(bookId.value)).execute()
     }
 }

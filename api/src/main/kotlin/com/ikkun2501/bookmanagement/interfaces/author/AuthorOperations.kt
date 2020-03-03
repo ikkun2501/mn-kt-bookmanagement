@@ -1,10 +1,7 @@
 package com.ikkun2501.bookmanagement.interfaces.author
 
-import com.ikkun2501.bookmanagement.domain.Author
-import com.ikkun2501.bookmanagement.usecase.command.author.AuthorSaveParams
-import com.ikkun2501.bookmanagement.usecase.command.author.AuthorUpdateParams
 import com.ikkun2501.bookmanagement.usecase.query.author.AuthorDetail
-import com.ikkun2501.bookmanagement.usecase.query.author.AuthorSearchParams
+import com.ikkun2501.bookmanagement.usecase.query.author.AuthorSearchRequest
 import com.ikkun2501.bookmanagement.usecase.query.author.AuthorSearchResultRow
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Delete
@@ -24,20 +21,20 @@ interface AuthorOperations {
     /**
      * 保存処理
      *
-     * @param authorSaveParams 著者保存パラメータ
+     * @param request 著者保存リクエスト
      * @return 著者
      */
     @Post("/")
-    fun save(@Header("Authorization") token: String, @Valid @Body authorSaveParams: AuthorSaveParams): Author
+    fun save(@Header("Authorization") token: String, @Valid @Body request: AuthorSaveRequest): AuthorDetail
 
     /**
      * 更新処理
      *
-     * @param authorUpdateParams 著者更新パラメータ
+     * @param request 著者更新リクエスト
      * @return 著者
      */
     @Put("/")
-    fun update(@Header("Authorization") token: String, @Valid @Body authorUpdateParams: AuthorUpdateParams): Author
+    fun update(@Header("Authorization") token: String, @Valid @Body request: AuthorUpdateRequest): AuthorDetail
 
     /**
      * 著者詳細表示
@@ -51,11 +48,11 @@ interface AuthorOperations {
     /**
      * 著者検索　
      *
-     * @param authorSearchParams 著者検索らパラメータ
+     * @param request 著者検索らパラメータ
      * @return 著者検索結果
      */
-    @Get("/search{?authorSearchParams*}")
-    fun search(@Header("Authorization") token: String, authorSearchParams: AuthorSearchParams): List<AuthorSearchResultRow>
+    @Get("/search{?request*}")
+    fun search(@Header("Authorization") token: String, request: AuthorSearchRequest): List<AuthorSearchResultRow>
 
     /**
      * 著者削除

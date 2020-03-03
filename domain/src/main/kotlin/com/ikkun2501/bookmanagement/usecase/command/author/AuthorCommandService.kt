@@ -13,20 +13,20 @@ import javax.inject.Singleton
 @Transactional
 @Singleton
 class AuthorCommandService(private val authorRepository: AuthorRepository) {
-    fun save(authorSaveParams: AuthorSaveParams): Author {
-        return authorSaveParams.run {
+    fun save(authorSaveCommand: AuthorSaveCommand): Author {
+        return authorSaveCommand.run {
             Author(
                 authorId = SequenceId.notAssigned(),
-                authorName = authorSaveParams.authorName,
-                description = authorSaveParams.description
+                authorName = authorName,
+                description = description
             )
         }.run(authorRepository::save)
     }
 
-    fun update(authorUpdateParams: AuthorUpdateParams): Author {
-        return authorUpdateParams.run {
+    fun update(authorUpdateCommand: AuthorUpdateCommand): Author {
+        return authorUpdateCommand.run {
             Author(
-                authorId = SequenceId(authorId),
+                authorId = authorId,
                 authorName = authorName,
                 description = description
             )

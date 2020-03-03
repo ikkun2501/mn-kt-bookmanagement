@@ -13,9 +13,9 @@ import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.UserA
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.UserDetailRecord
 import com.ikkun2501.bookmanagement.usecase.query.author.AuthorDetail
 import com.ikkun2501.bookmanagement.usecase.query.author.AuthorSearchResultRow
-import com.ikkun2501.bookmanagement.usecase.query.author.BookInfo
 import com.ikkun2501.bookmanagement.usecase.query.book.BookDetail
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow
+import com.ikkun2501.bookmanagement.usecase.query.user.UserDetail
 import org.jooq.Record
 
 /**
@@ -62,12 +62,32 @@ fun Record.toBookDetail(): BookDetail {
 /**
  * RecordからBookDetailへの変換
  */
+fun UserDetailRecord.toUserDetail(): UserDetail {
+    return UserDetail(
+        userId = userId,
+        userName = userName,
+        birthday = birthday
+    )
+}
+
+/**
+ * RecordからBookDetailへの変換
+ */
 fun toAuthorDetail(authorRecord: AuthorRecord, books: List<BookRecord>): AuthorDetail {
     return AuthorDetail(
         authorId = authorRecord.authorId,
         authorName = authorRecord.authorName,
         authorDescription = authorRecord.description,
-        books = books.map(BookRecord::toBookInfo)
+        books = books.map {
+            BookDetail(
+                bookId = it.bookId,
+                authorName = authorRecord.authorName,
+                authorId = authorRecord.authorId,
+                title = it.title,
+                bookDescription = it.description,
+                authorDescription = authorRecord.description
+            )
+        }
     )
 }
 
@@ -83,15 +103,6 @@ fun Record.toBookSearchResult(): BookSearchResultRow {
         title = this[Tables.BOOK.TITLE],
         authorId = this[Tables.BOOK.AUTHOR_ID],
         authorName = this[Tables.AUTHOR.AUTHOR_NAME]
-    )
-}
-
-fun BookRecord.toBookInfo(): BookInfo {
-    return BookInfo(
-        bookId = bookId,
-        bookDescription = description,
-        authorId = authorId,
-        title = title
     )
 }
 

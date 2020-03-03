@@ -1,10 +1,7 @@
 package com.ikkun2501.bookmanagement.interfaces.book
 
-import com.ikkun2501.bookmanagement.domain.Book
-import com.ikkun2501.bookmanagement.usecase.command.book.BookSaveParams
-import com.ikkun2501.bookmanagement.usecase.command.book.BookUpdateParams
 import com.ikkun2501.bookmanagement.usecase.query.book.BookDetail
-import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchParams
+import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchRequest
 import com.ikkun2501.bookmanagement.usecase.query.book.BookSearchResultRow
 import io.micronaut.http.annotation.Body
 import io.micronaut.http.annotation.Delete
@@ -25,7 +22,8 @@ interface BookOperations {
 
     /**
      * 詳細表示
-     * @param bookId
+     *
+     * @param bookId 書籍ID
      * @return
      */
     @Get("/{bookId}")
@@ -34,34 +32,34 @@ interface BookOperations {
     /**
      * 検索
      *
-     * @param bookSearchParams
+     * @param request 書籍検索リクエスト
      * @return
      */
-    @Get("/search{?bookSearchParams*}")
-    fun search(@Header("Authorization") token: String, bookSearchParams: BookSearchParams): List<BookSearchResultRow>
+    @Get("/search{?request*}")
+    fun search(@Header("Authorization") token: String, request: BookSearchRequest): List<BookSearchResultRow>
 
     /**
      * 登録
      *
-     * @param bookSaveParams
+     * @param request 書籍登録リクエスト
      * @return
      */
     @Post("/")
-    fun save(@Header("Authorization") token: String, @Valid @Body bookSaveParams: BookSaveParams): Book
+    fun save(@Header("Authorization") token: String, @Valid @Body request: BookSaveRequest): BookDetail
 
     /**
-     * 更新
+     * 書籍更新
      *
-     * @param book
+     * @param request 書籍更新リクエスト
      * @return
      */
     @Put("/")
-    fun update(@Header("Authorization") token: String, @Valid @Body book: BookUpdateParams): Book
+    fun update(@Header("Authorization") token: String, @Valid @Body request: BookUpdateRequest): BookDetail
 
     /**
-     * 削除
+     * 書籍削除
      *
-     * @param bookId
+     * @param bookId 書籍ID
      */
     @Delete("/{bookId}")
     fun delete(@Header("Authorization") token: String, @PathVariable bookId: Int)
