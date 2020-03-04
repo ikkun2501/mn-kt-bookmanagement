@@ -15,6 +15,8 @@ jobs:
           architecture: 'x64'
       - name: install danger1
         run: gem install bundler
+      - name: bundler version
+        run: bundler -v
       - name: install danger2
         run: bundle install
       - name: run ktlintCheck
