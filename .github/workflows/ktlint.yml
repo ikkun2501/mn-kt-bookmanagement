@@ -11,12 +11,12 @@ jobs:
       - name: Setup ruby
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: '2.6.5'
+          ruby-version: '2.6.x'
           architecture: 'x64'
       - name: install danger
         run: |
           gem install bundler
-          bundle install
+          bundle install --jobs 4 --retry 3
       - name: run ktlintCheck
         run: ./gradlew ktlintCheck
       - name: run danger
