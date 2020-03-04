@@ -10,7 +10,7 @@ import io.micronaut.core.annotation.Introspected
  * @property limit
  */
 @Introspected
-data class AuthorSearchParams(
+data class AuthorSearchRequest(
     val keyword: String,
     val page: Int,
     val limit: Int

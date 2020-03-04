@@ -39,16 +39,16 @@ class UserCommandService(val userRepository: UserRepository) {
     /**
      * ユーザ登録
      *
-     * @param userSaveParams
+     * @param userSaveCommand
      * @return
      */
-    fun save(userSaveParams: UserSaveParams): User {
+    fun save(userSaveCommand: UserSaveCommand): User {
 
         // ログインIDが既に登録されていたら
-        if (userRepository.findByLoginId(userSaveParams.loginId) != null) {
+        if (userRepository.findByLoginId(userSaveCommand.loginId) != null) {
             throw DuplicateException()
         }
-        val user = userSaveParams.run {
+        val user = userSaveCommand.run {
             User(
                 userId = SequenceId.notAssigned(),
                 loginId = loginId,
@@ -65,14 +65,14 @@ class UserCommandService(val userRepository: UserRepository) {
     /**
      * ユーザ詳細更新
      *
-     * @param userDetailUpdateParams
+     * @param userDetailUpdateCommand
      * @return
      */
-    fun updateUserDetail(userDetailUpdateParams: UserDetailUpdateParams): User {
+    fun updateUserDetail(userDetailUpdateCommand: UserDetailUpdateCommand): User {
 
-        val user = userRepository.findByUserId(userDetailUpdateParams.userId) ?: throw NotFoundException()
+        val user = userRepository.findByUserId(userDetailUpdateCommand.userId) ?: throw NotFoundException()
 
-        return userRepository.update(userDetailUpdateParams.run {
+        return userRepository.update(userDetailUpdateCommand.run {
             user.copy(userName = userName, birthday = birthday)
         })
     }

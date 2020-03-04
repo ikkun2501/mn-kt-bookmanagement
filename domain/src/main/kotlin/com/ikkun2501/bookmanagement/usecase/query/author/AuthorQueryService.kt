@@ -5,5 +5,5 @@ package com.ikkun2501.bookmanagement.usecase.query.author
  */
 interface AuthorQueryService {
     fun detail(authorId: Int): AuthorDetail
-    fun search(authorSearchParams: AuthorSearchParams): List<AuthorSearchResultRow>
+    fun search(authorSearchRequest: AuthorSearchRequest): List<AuthorSearchResultRow>
 }

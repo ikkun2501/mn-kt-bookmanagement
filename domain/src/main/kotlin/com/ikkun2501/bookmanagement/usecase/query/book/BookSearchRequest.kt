@@ -11,7 +11,7 @@ import io.micronaut.core.annotation.Introspected
  * @property limit 取得数
  */
 @Introspected
-data class BookSearchParams(
+data class BookSearchRequest(
     val keyword: String,
     val page: Int,
     val limit: Int

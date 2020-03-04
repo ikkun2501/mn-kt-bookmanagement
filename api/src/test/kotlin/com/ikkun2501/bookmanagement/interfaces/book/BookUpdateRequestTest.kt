@@ -1,4 +1,4 @@
-package com.ikkun2501.bookmanagement.usecase.command.book
+package com.ikkun2501.bookmanagement.interfaces.book
 
 import io.micronaut.test.annotation.MicronautTest
 import io.micronaut.validation.validator.Validator
@@ -7,14 +7,19 @@ import org.junit.jupiter.api.Test
 import javax.inject.Inject
 
 @MicronautTest
-internal class BookSaveParamsTest {
+internal class BookUpdateRequestTest {
 
     @Inject
     lateinit var validator: Validator
 
     @Test
     fun notBlankTest() {
-        val params = BookSaveParams(authorId = 1, description = "", title = "")
+        val params = BookUpdateRequest(
+            bookId = 1,
+            authorId = 1,
+            description = "",
+            title = ""
+        )
 
         val constraintViolations = validator.validate(params)
 
@@ -26,10 +31,12 @@ internal class BookSaveParamsTest {
 
     @Test
     fun maxTest() {
-        val params = BookSaveParams(
-            authorId = 1, description = "1234567890".repeat(200) + "1", title = "title"
+        val params = BookUpdateRequest(
+            bookId = 1,
+            authorId = 1,
+            description = "1234567890".repeat(200) + "1",
+            title = "title"
         )
-
         val constraintViolations = validator.validate(params)
 
         assertEquals(1, constraintViolations.size)
