@@ -5,18 +5,18 @@ on:
     - master
 jobs:
   build:
-    runs-on: ubuntu-latest    
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
       - name: Setup ruby
         uses: actions/setup-ruby@v1
         with:
-          ruby-version: '2.6.x'
+          ruby-version: '2.6'
           architecture: 'x64'
-      - name: install danger
-        run: |
-          gem install bundler
-          bundle install --jobs 4 --retry 3
+      - name: install danger1
+        run: gem install bundler
+      - name: install danger2
+        run: bundle install
       - name: run ktlintCheck
         run: ./gradlew ktlintCheck
       - name: run danger
