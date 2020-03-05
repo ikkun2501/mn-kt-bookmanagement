@@ -17,10 +17,10 @@ jobs:
         run: gem install bundler
       - name: bundler version
         run: bundler -v
-      - name: danger version
-        run: gem -v danger
       - name: install danger2
         run: bundle install
+      - name: danger version
+        run: gem -v danger
       - name: run ktlintCheck
         run: ./gradlew ktlintCheck
       - name: run danger
