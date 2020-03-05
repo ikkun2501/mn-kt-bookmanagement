@@ -21,6 +21,8 @@ jobs:
         run: bundle install
       - name: danger version
         run: gem -v danger
+      - name: danger version2
+        run: danger --version
       - name: run ktlintCheck
         run: ./gradlew ktlintCheck
       - name: run danger
