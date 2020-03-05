@@ -9,6 +9,6 @@ warn("PR is classed as Work in Progress") if github.pr_title.include? "[WIP]"
 # ktlint
 checkstyle_dir = "**/ktlint/ktlintMainSourceSetCheck.xml"
 Dir[checkstyle_dir].each do |file_name|
-  checkstyle_format.base_path = file_name
-  checkstyle_format.report file_name
+    checkstyle_format.base_path = Dir.pwd
+    checkstyle_format.report file_name
 end
