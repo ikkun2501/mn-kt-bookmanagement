@@ -31,17 +31,18 @@ allprojects {
     apply plugin: "org.jetbrains.kotlin.kapt"
     apply plugin: "org.jetbrains.kotlin.plugin.allopen"
 
-}
-
-ktlint {
-    additionalEditorconfigFile = file(".editorconfig")
-    ignoreFailures = true
-    version = "0.36.0"
-    reporters {
-        reporter "plain"
-        reporter "checkstyle"
+    ktlint {
+        additionalEditorconfigFile = file("${rootDir}/.editorconfig")
+        ignoreFailures = true
+        version = "0.36.0"
+        reporters {
+            reporter "plain"
+            reporter "checkstyle"
+        }
     }
 }
+
+
 
 configurations {
     // for dependencies that are needed for development only
