@@ -17,7 +17,7 @@ jobs:
         run: gem install bundler
       - name: bundler version
         run: bundler -v
-      - name danger version
+      - name: danger version
       - run: gem -v danger
       - name: install danger2
         run: bundle install
