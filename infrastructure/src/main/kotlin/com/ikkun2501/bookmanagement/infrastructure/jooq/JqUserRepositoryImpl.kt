@@ -40,18 +40,18 @@ class JqUserRepositoryImpl(
     override fun save(user: User): User {
         val userRecord = dsl.newRecord(Tables.USER)
             .values(null, LocalDateTime.now())
-        userRecord.store()
+                    userRecord.store()
 
-        dsl.newRecord(USER_DETAIL)
+dsl.newRecord(USER_DETAIL)
             .values(userRecord.userId, user.userName, user.birthday).store()
 
         dsl.newRecord(USER_AUTHENTICATION)
             .values(userRecord.userId, user.loginId, user.password.value).store()
 
-        user.roles.forEach {
+             user.roles  .forEach {
             dsl.newRecord(USER_AUTHORIZATION)
                 .values(userRecord.userId, it).store()
-        }
+    }
 
         return requireNotNull(findByUserId(SequenceId(userRecord.userId)))
     }
