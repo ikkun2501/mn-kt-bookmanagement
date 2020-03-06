@@ -11,5 +11,3 @@ Dir[checkstyle_dir].each do |file_name|
     checkstyle_format.report file_name
 end
 
-warn("Warning")
-message("Hello World")
