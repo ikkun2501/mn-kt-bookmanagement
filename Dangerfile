@@ -10,3 +10,6 @@ Dir[checkstyle_dir].each do |file_name|
     checkstyle_format.base_path = Dir.pwd
     checkstyle_format.report file_name
 end
+
+warn("Warning")
+messages("Hello World")
