@@ -14,8 +14,8 @@ import javax.validation.constraints.Size
 @Introspected
 data class BookSaveRequest(
     @field:NotBlank
-    val title: String,
-    val authorId: Int,
+val title: String,
+        val authorId: Int,
     @field:Size(max = 2000)
     val description: String
 )

@@ -2,7 +2,7 @@ name: CI
 on:
   pull_request:
     branches:
-    - master
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,12 +13,10 @@ jobs:
         with:
           ruby-version: '2.6'
           architecture: 'x64'
-      - name: install danger1
-        run: gem install bundler
-      - name: bundler version
-        run: bundler -v
-      - name: install danger2
-        run: bundle install
+      - name: install danger
+        run: |
+          gem install bundler
+          bundle install
       - name: run ktlintCheck
         run: ./gradlew ktlintCheck
       - name: run danger

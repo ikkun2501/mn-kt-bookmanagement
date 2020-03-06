@@ -1,7 +1,7 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.3.50" apply false
-    id "org.jetbrains.kotlin.kapt" version "1.3.50" apply false
-    id "org.jetbrains.kotlin.plugin.allopen" version "1.3.50" apply false
+    id "org.jetbrains.kotlin.jvm" version "1.3.61" apply false
+    id "org.jetbrains.kotlin.kapt" version "1.3.61" apply false
+    id "org.jetbrains.kotlin.plugin.allopen" version "1.3.61" apply false
     id "com.github.johnrengelman.shadow" version "5.2.0"
     id "application"
     id "org.jlleitschuh.gradle.ktlint" version "9.2.1" apply false
@@ -22,17 +22,27 @@ allprojects {
     if (!hasProperty('env')) {
         ext.env = 'dev'
     }
+
+
     apply from: "${rootDir}/env/${env}.gradle"
 
     apply plugin: "org.jlleitschuh.gradle.ktlint"
     apply plugin: "org.jetbrains.kotlin.jvm"
     apply plugin: "org.jetbrains.kotlin.kapt"
     apply plugin: "org.jetbrains.kotlin.plugin.allopen"
+
+    ktlint {
+        additionalEditorconfigFile = file("${rootDir}/.editorconfig")
+        ignoreFailures = true
+        version = "0.36.0"
+        reporters {
+            reporter "plain"
+            reporter "checkstyle"
+        }
+    }
 }
 
-ktlint {
-    additionalEditorconfigFile.set(file(".editorconfig"))
-}
+
 
 configurations {
     // for dependencies that are needed for development only

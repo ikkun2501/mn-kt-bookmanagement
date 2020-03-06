@@ -189,7 +189,7 @@ internal class AuthorControllerTest {
 
         val returnAuthorDetail = authorClient.show(authClient.defaultUserLogin(), author.authorId)
 
-        val expectedAuthorDetail =  toAuthorDetail(author,books)
+        val expectedAuthorDetail = toAuthorDetail(author, books)
 
         assertEquals(expectedAuthorDetail, returnAuthorDetail)
     }
