@@ -12,4 +12,4 @@ Dir[checkstyle_dir].each do |file_name|
 end
 
 warn("Warning")
-messages("Hello World")
+message("Hello World")
