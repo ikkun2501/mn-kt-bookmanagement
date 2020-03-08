@@ -1,5 +1,6 @@
 package com.ikkun2501.bookmanagement.interfaces
 
+import com.github.javafaker.Faker
 import com.ikkun2501.bookmanagement.deleteAll
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.tables.records.UserAuthenticationRecord
@@ -27,25 +28,31 @@ internal class AuthenticationProviderUserPasswordTest {
     @Inject
     lateinit var dataSource: DataSource
 
+    @Inject
+    lateinit var faker: Faker
+
     private val passwordEncoder = BCryptPasswordEncoder()
 
     @Test
     fun auth() {
 
+        val loginId = faker.random().hex()
+        val password = faker.internet().password()
+        val username = faker.funnyName().name()
         dbSetup(dataSource) {
             deleteAll()
             insertInto(Tables.USER.name) {
                 values(UserRecord(1, LocalDateTime.now()).intoMap())
             }
             insertInto(Tables.USER_DETAIL.name) {
-                values(UserDetailRecord(1, "ユーザ名", LocalDate.now()).intoMap())
+                values(UserDetailRecord(1, username, LocalDate.now()).intoMap())
             }
             insertInto(Tables.USER_AUTHENTICATION.name) {
                 values(
                     UserAuthenticationRecord(
                         1,
-                        "loginId",
-                        passwordEncoder.encode("password")
+                        loginId,
+                        passwordEncoder.encode(password)
                     ).intoMap()
                 )
             }
@@ -55,9 +62,9 @@ internal class AuthenticationProviderUserPasswordTest {
             }
         }.launch()
 
-        val token = authClient.login(UsernamePasswordCredentials("loginId", "password"))
+        val token = authClient.login(UsernamePasswordCredentials(loginId, password))
 
-        assertEquals("ユーザ名", token.username)
+        assertEquals(username, token.username)
         assertIterableEquals(listOf("ROLE_ADMIN", "ROLE_USER"), token.roles)
     }
 }

@@ -1,5 +1,6 @@
 package com.ikkun2501.bookmanagement.interfaces
 
+import com.github.javafaker.Faker
 import com.ikkun2501.bookmanagement.defaultUserLogin
 import com.ikkun2501.bookmanagement.deleteAll
 import com.ikkun2501.bookmanagement.insertDefaultUser
@@ -36,6 +37,9 @@ internal class UserControllerTest {
     @Inject
     lateinit var userQueryService: UserQueryService
 
+    @Inject
+    lateinit var faker: Faker
+
     /**
      * 登録テスト
      */
@@ -46,11 +50,12 @@ internal class UserControllerTest {
             deleteAll()
         }.launch()
 
+        val password = faker.internet().password()
         val request = UserSaveRequest(
-            loginId = "user",
-            password = "password",
-            confirmPassword = "password",
-            userName = "user",
+            loginId = faker.random().hex(),
+            password = password,
+            confirmPassword = password,
+            userName = faker.funnyName().name(),
             birthday = LocalDate.now()
         )
 
@@ -76,10 +81,10 @@ internal class UserControllerTest {
         }.launch()
 
         val userSaveRequest = UserSaveRequest(
-            loginId = "user",
+            loginId = faker.random().hex(),
             password = "password1",
             confirmPassword = "password2",
-            userName = "user",
+            userName = faker.funnyName().name(),
             birthday = LocalDate.now()
         )
         assertThrows(HttpClientResponseException::class.java) {
@@ -119,7 +124,7 @@ internal class UserControllerTest {
 
         val request = UserDetailUpdateRequest(
             userId = 1,
-            userName = "userName2",
+            userName = faker.funnyName().name(),
             birthday = LocalDate.of(2000, 1, 1)
         )
 
@@ -162,7 +167,7 @@ internal class UserControllerTest {
 
         val request = UserDetailUpdateRequest(
             userId = 9999,
-            userName = "userName",
+            userName = faker.funnyName().name(),
             birthday = LocalDate.of(2000, 1, 1)
         )
         // 404 error

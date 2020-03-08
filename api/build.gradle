@@ -53,6 +53,10 @@ dependencies {
     // openapi
     kapt "io.micronaut.configuration:micronaut-openapi"
     implementation "io.swagger.core.v3:swagger-annotations"
+
+    // test data
+    testImplementation "com.github.javafaker:javafaker:1.0.2"
+
 }
 
 test.classpath += configurations.developmentOnly

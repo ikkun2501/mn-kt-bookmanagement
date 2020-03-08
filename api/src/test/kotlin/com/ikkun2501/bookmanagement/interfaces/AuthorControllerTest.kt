@@ -1,5 +1,6 @@
 package com.ikkun2501.bookmanagement.interfaces
 
+import com.github.javafaker.Faker
 import com.ikkun2501.bookmanagement.defaultUserLogin
 import com.ikkun2501.bookmanagement.deleteAll
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.AUTHOR
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Assertions.assertIterableEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.api.assertThrows
+import org.slf4j.LoggerFactory
 import javax.inject.Inject
 import javax.sql.DataSource
 import javax.validation.ConstraintViolationException
@@ -45,6 +47,11 @@ internal class AuthorControllerTest {
     @Inject
     lateinit var dsl: DSLContext
 
+    @Inject
+    lateinit var faker: Faker
+
+    private val logger = LoggerFactory.getLogger(this.javaClass)
+
     /**
      * 登録テスト
      */
@@ -57,8 +64,8 @@ internal class AuthorControllerTest {
         }.launch()
 
         val authorSaveParams = AuthorSaveRequest(
-            authorName = "著者名",
-            description = "書籍説明"
+            authorName = faker.book().author(),
+            description = faker.lorem().fixedString(500)
         )
 
         val returnAuthor = authorClient.save(authClient.defaultUserLogin(), authorSaveParams)
@@ -100,15 +107,15 @@ internal class AuthorControllerTest {
             insertDefaultUser()
 
             insertInto(AUTHOR.name) {
-                values(AuthorRecord(1, "著者名１", "著者説明１").intoMap())
-                values(AuthorRecord(2, "著者名２", "著者説明２").intoMap())
+                values(AuthorRecord(1, faker.book().author(), faker.lorem().fixedString(500)).intoMap())
+                values(AuthorRecord(2, faker.book().author(), faker.lorem().fixedString(500)).intoMap())
             }
         }.launch()
 
         val request = AuthorUpdateRequest(
             authorId = authorId,
-            authorName = "著者名",
-            description = "著者説明"
+            authorName = faker.book().author(),
+            description = faker.lorem().fixedString(500)
         )
 
         val returnAuthor = authorClient.update(authClient.defaultUserLogin(), request)
@@ -137,7 +144,7 @@ internal class AuthorControllerTest {
         assertThrows<ConstraintViolationException>("") {
             authorClient.update(
                 authClient.defaultUserLogin(),
-                AuthorUpdateRequest(authorId = 1, authorName = "", description = "著者説明")
+                AuthorUpdateRequest(authorId = 1, authorName = "", description = faker.lorem().fixedString(500))
             )
         }
     }
@@ -151,7 +158,7 @@ internal class AuthorControllerTest {
             deleteAll()
             insertDefaultUser()
             insertInto(AUTHOR.name) {
-                values(AuthorRecord(1, "著者名", "著者説明").intoMap())
+                values(AuthorRecord(1, faker.book().author(), faker.lorem().fixedString(500)).intoMap())
             }
         }.launch()
 
@@ -168,11 +175,11 @@ internal class AuthorControllerTest {
 
         val authorId = 1
         val books = listOf(
-            BookRecord(1, 1, "タイトル1", "書籍説明1"),
-            BookRecord(2, 1, "タイトル2", "書籍説明2"),
-            BookRecord(3, 1, "タイトル3", "書籍説明3")
+            BookRecord(1, 1, faker.book().title(), faker.lorem().fixedString(500)),
+            BookRecord(2, 1, faker.book().title(), faker.lorem().fixedString(500)),
+            BookRecord(3, 1, faker.book().title(), faker.lorem().fixedString(500))
         )
-        val author = AuthorRecord(authorId, "著者名", "著者説明")
+        val author = AuthorRecord(authorId, faker.book().author(), faker.lorem().fixedString(500))
 
         dbSetup(dataSource) {
             deleteAll()
@@ -189,7 +196,7 @@ internal class AuthorControllerTest {
 
         val returnAuthorDetail = authorClient.show(authClient.defaultUserLogin(), author.authorId)
 
-        val expectedAuthorDetail =  toAuthorDetail(author,books)
+        val expectedAuthorDetail = toAuthorDetail(author, books)
 
         assertEquals(expectedAuthorDetail, returnAuthorDetail)
     }
@@ -197,7 +204,7 @@ internal class AuthorControllerTest {
     @Test
     fun search_全件数() {
 
-        val author = AuthorRecord(1, "著者名", "著者説明")
+        val author = AuthorRecord(1, faker.book().author(), faker.lorem().fixedString(500))
 
         dbSetup(dataSource) {
             deleteAll()
@@ -217,7 +224,10 @@ internal class AuthorControllerTest {
     @Test
     fun search_keyword() {
 
-        val author = AuthorRecord(1, "著者名", "著者説明")
+        val fullName = faker.name().fullName()
+        val (lastName, firstName) = fullName.split(" ")
+
+        val author = AuthorRecord(1, fullName, faker.lorem().fixedString(500))
 
         dbSetup(dataSource) {
             deleteAll()
@@ -229,15 +239,28 @@ internal class AuthorControllerTest {
 
         val searchParams = AuthorSearchRequest(keyword = "", page = 1, limit = 100)
 
-        assertEquals(1, authorClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = "著者")).size)
-        assertEquals(1, authorClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = "者名")).size)
-        assertEquals(0, authorClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = "著者名1")).size)
+        assertEquals(
+            1,
+            authorClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = fullName)).size
+        )
+        assertEquals(
+            1,
+            authorClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = firstName)).size
+        )
+        assertEquals(
+            1,
+            authorClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = lastName)).size
+        )
+        assertEquals(
+            0,
+            authorClient.search(authClient.defaultUserLogin(), searchParams.copy(keyword = fullName + "1")).size
+        )
     }
 
     @Test
     fun search_page_limit() {
 
-        val author = AuthorRecord(1, "著者名", "著者説明")
+        val author = AuthorRecord(1, faker.book().author(), faker.lorem().fixedString(500))
 
         dbSetup(dataSource) {
             deleteAll()
@@ -263,11 +286,11 @@ internal class AuthorControllerTest {
             deleteAll()
             insertDefaultUser()
             insertInto(AUTHOR.name) {
-                values(AuthorRecord(1, "著者名5", "著者説明").intoMap())
-                values(AuthorRecord(2, "著者名4", "著者説明").intoMap())
-                values(AuthorRecord(3, "著者名3", "著者説明").intoMap())
-                values(AuthorRecord(4, "著者名2", "著者説明").intoMap())
-                values(AuthorRecord(5, "著者名1", "著者説明").intoMap())
+                values(AuthorRecord(1, "著者名5", "").intoMap())
+                values(AuthorRecord(2, "著者名4", "").intoMap())
+                values(AuthorRecord(3, "著者名3", "").intoMap())
+                values(AuthorRecord(4, "著者名2", "").intoMap())
+                values(AuthorRecord(5, "著者名1", "").intoMap())
             }
         }.launch()
 
