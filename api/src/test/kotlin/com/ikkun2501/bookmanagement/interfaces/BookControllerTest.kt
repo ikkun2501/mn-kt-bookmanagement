@@ -1,5 +1,6 @@
 package com.ikkun2501.bookmanagement.interfaces
 
+import com.github.javafaker.Faker
 import com.ikkun2501.bookmanagement.defaultUserLogin
 import com.ikkun2501.bookmanagement.deleteAll
 import com.ikkun2501.bookmanagement.infrastructure.jooq.gen.Tables.AUTHOR
@@ -46,6 +47,9 @@ internal class BookControllerTest {
     @Inject
     lateinit var dsl: DSLContext
 
+    @Inject
+    lateinit var faker: Faker
+
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
     /**
@@ -54,18 +58,19 @@ internal class BookControllerTest {
     @Test
     fun save() {
 
+        val ar = AuthorRecord(1, faker.book().author(), faker.lorem().fixedString(500))
         dbSetup(dataSource) {
             deleteAll()
             insertDefaultUser()
             insertInto(AUTHOR.name) {
-                values(AuthorRecord(1, "著者名", "著者説明").intoMap())
+                values(ar.intoMap())
             }
         }.launch()
 
         val bookSaveParams = BookSaveRequest(
-            title = "タイトル",
+            title = faker.book().title(),
             authorId = 1,
-            description = "書籍説明"
+            description = faker.lorem().fixedString(500)
         )
 
         val returnBookDetail = bookClient.save(authClient.defaultUserLogin(), bookSaveParams)
@@ -73,7 +78,7 @@ internal class BookControllerTest {
         assertEquals(bookSaveParams.title, returnBookDetail.title)
         assertEquals(bookSaveParams.authorId, returnBookDetail.authorId)
         assertEquals(bookSaveParams.description, returnBookDetail.bookDescription)
-        assertEquals("著者説明", returnBookDetail.authorDescription)
+        assertEquals(ar.description, returnBookDetail.authorDescription)
 
         val dbBook = bookQueryService.detail(returnBookDetail.bookId)
         assertEquals(dbBook, returnBookDetail)
@@ -92,7 +97,8 @@ internal class BookControllerTest {
 
         assertThrows<ConstraintViolationException>("") {
             bookClient.save(
-                authClient.defaultUserLogin(), BookSaveRequest(title = "", authorId = 1, description = "書籍説明")
+                authClient.defaultUserLogin(),
+                BookSaveRequest(title = "", authorId = 1, description = faker.lorem().fixedString(500))
             )
         }
     }
@@ -104,23 +110,25 @@ internal class BookControllerTest {
     fun update() {
 
         val bookId = 1
+        val ar1 = AuthorRecord(1, faker.book().author(), faker.lorem().fixedString(500))
+        val ar2 = AuthorRecord(2, faker.book().author(), faker.lorem().fixedString(500))
         dbSetup(dataSource) {
             deleteAll()
             insertDefaultUser()
 
             insertInto(AUTHOR.name) {
-                values(AuthorRecord(1, "著者名１", "著者説明１").intoMap())
-                values(AuthorRecord(2, "著者名２", "著者説明２").intoMap())
+                values(ar1.intoMap())
+                values(ar2.intoMap())
             }
             insertInto(BOOK.name) {
-                values(BookRecord(bookId, 1, "タイトル", "書籍説明").intoMap())
+                values(BookRecord(bookId, 1, faker.book().title(), faker.lorem().fixedString(500)).intoMap())
             }
         }.launch()
 
         val request = BookUpdateRequest(
             bookId = bookId,
-            title = "タイトル２",
-            description = "",
+            title = faker.book().title(),
+            description = faker.lorem().fixedString(500),
             authorId = 2
         )
 
@@ -149,7 +157,8 @@ internal class BookControllerTest {
 
         assertThrows<ConstraintViolationException>("") {
             bookClient.update(
-                authClient.defaultUserLogin(), BookUpdateRequest(bookId = 1, title = "", authorId = 1, description = "書籍説明")
+                authClient.defaultUserLogin(),
+                BookUpdateRequest(bookId = 1, title = "", authorId = 1, description = faker.lorem().fixedString(500))
             )
         }
     }
@@ -163,10 +172,10 @@ internal class BookControllerTest {
             deleteAll()
             insertDefaultUser()
             insertInto(AUTHOR.name) {
-                values(AuthorRecord(1, "著者名", "著者説明").intoMap())
+                values(AuthorRecord(1, faker.book().author(), faker.lorem().fixedString(500)).intoMap())
             }
             insertInto(BOOK.name) {
-                values(BookRecord(bookId, 1, "タイトル", "書籍説明").intoMap())
+                values(BookRecord(bookId, 1, faker.book().title(), faker.lorem().fixedString(500)).intoMap())
             }
         }.launch()
 
@@ -182,8 +191,8 @@ internal class BookControllerTest {
     fun show() {
 
         val bookId = 1
-        val book = BookRecord(bookId, 1, "タイトル", "書籍説明")
-        val author = AuthorRecord(1, "著者名", "著者説明")
+        val book = BookRecord(bookId, 1, faker.book().title(), faker.lorem().fixedString(500))
+        val author = AuthorRecord(1, faker.book().author(), faker.lorem().fixedString(500))
 
         dbSetup(dataSource) {
             deleteAll()
@@ -215,8 +224,8 @@ internal class BookControllerTest {
     fun search_全件数() {
 
         val bookId = 1
-        val book = BookRecord(bookId, 1, "タイトル", "書籍説明")
-        val author = AuthorRecord(1, "著者名", "著者説明")
+        val book = BookRecord(bookId, 1, faker.book().title(), faker.lorem().fixedString(500))
+        val author = AuthorRecord(1, faker.book().author(), faker.lorem().fixedString(500))
 
         dbSetup(dataSource) {
             deleteAll()
@@ -240,8 +249,8 @@ internal class BookControllerTest {
     fun search_keyword() {
 
         val bookId = 1
-        val book = BookRecord(bookId, 1, "タイトル", "書籍説明")
-        val author = AuthorRecord(1, "著者名", "著者説明")
+        val book = BookRecord(bookId, 1, "タイトル", faker.lorem().fixedString(500))
+        val author = AuthorRecord(1, "著者名", faker.lorem().fixedString(500))
 
         dbSetup(dataSource) {
             deleteAll()
@@ -270,8 +279,8 @@ internal class BookControllerTest {
     @Test
     fun search_page_limit() {
 
-        val book = BookRecord(null, 1, "タイトル", "書籍説明")
-        val author = AuthorRecord(1, "著者名", "著者説明")
+        val book = BookRecord(null, 1, faker.book().title(), faker.lorem().fixedString(500))
+        val author = AuthorRecord(1, faker.book().author(), faker.lorem().fixedString(500))
 
         dbSetup(dataSource) {
             deleteAll()
@@ -300,14 +309,14 @@ internal class BookControllerTest {
             deleteAll()
             insertDefaultUser()
             insertInto(AUTHOR.name) {
-                values(AuthorRecord(1, "著者名", "著者説明").intoMap())
+                values(AuthorRecord(1, faker.book().author(), faker.lorem().fixedString(500)).intoMap())
             }
             insertInto(BOOK.name) {
-                values(BookRecord(1, 1, "タイトル5", "書籍説明").intoMap())
-                values(BookRecord(2, 1, "タイトル4", "書籍説明").intoMap())
-                values(BookRecord(3, 1, "タイトル3", "書籍説明").intoMap())
-                values(BookRecord(4, 1, "タイトル2", "書籍説明").intoMap())
-                values(BookRecord(5, 1, "タイトル1", "書籍説明").intoMap())
+                values(BookRecord(1, 1, "タイトル5", faker.lorem().fixedString(500)).intoMap())
+                values(BookRecord(2, 1, "タイトル4", faker.lorem().fixedString(500)).intoMap())
+                values(BookRecord(3, 1, "タイトル3", faker.lorem().fixedString(500)).intoMap())
+                values(BookRecord(4, 1, "タイトル2", faker.lorem().fixedString(500)).intoMap())
+                values(BookRecord(5, 1, "タイトル1", faker.lorem().fixedString(500)).intoMap())
             }
         }.launch()
 
