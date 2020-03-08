@@ -19,7 +19,8 @@ jobs:
           bundle install
       - name: run ktlintCheck
         run: ./gradlew ktlintCheck
-      - name: run danger
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: danger
+      - name: ktlint
+        uses: ScaCap/action-ktlint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review
