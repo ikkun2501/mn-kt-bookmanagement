@@ -64,10 +64,13 @@ api/build/tmp/kapt3/classes/main/META-INF/swagger/mn-kotlin-openapi-app-1.0.yml
 
 # TODO
 * [x] OpenAPI導入
-* [ ] Client実装（react）
 * [ ] github actions
-    * [ ] ktlint
+    * [x] ktlint
     * [ ] test
+* [x] テストのダミーデータをfakerを利用して生成
+* [ ] 権限チェック実装
+* [ ] ユースケースでバリデーション（Arrow or YAVI)
+* [ ] Client実装（react）
 * [ ] EXPOSEによる実装
     * [ ] 環境変数による切り替え    
 * [ ] coroutineによる実装 
