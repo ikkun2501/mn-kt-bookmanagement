@@ -1,0 +1,40 @@
+apply from: "${rootDir}/env/dataSource.gradle.kts"
+
+def jdbcDriver = "com.mysql.cj.jdbc.Driver"
+def jooqDestDir = "$buildDir/jooq-gen/"
+def jooqDestPackage = "com.ikkun2501.bookmanagement.infrastructure.jooq.gen"
+
+jooq {
+    version = Version.jooq
+    edition = 'OSS'
+
+    bookmanagement(sourceSets.main) {
+        jdbc {
+            driver = jdbcDriver
+            url = "${datasource.default.url}"
+            user = "${datasource.default.user}"
+            password = "${datasource.default.password}"
+        }
+        generator {
+            target {
+                packageName = "${jooqDestPackage}"
+                directory = "${jooqDestDir}"
+            }
+            strategy {
+                name = 'com.ikkun2501.bookmanagement.infrastructure.OriginalPrefixGeneratorStrategy'
+            }
+            database {
+                name = 'org.jooq.meta.mysql.MySQLDatabase'
+                inputSchema = 'bookmanagement'
+                excludes = 'flyway_schema_history'
+            }
+            generate() {
+                daos = true
+                immutablePojos = true
+                pojosEqualsAndHashCode = true
+                javaTimeTypes = true
+                generatedAnnotationType = "JAVAX_ANNOTATION_GENERATED"
+            }
+        }
+    }
+}
